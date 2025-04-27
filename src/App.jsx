@@ -5,8 +5,9 @@ import Login from './pages/Login'
 import AppBar from './components/appbar'
 import EditCard from './pages/EditCard'
 import { useEffect, useState } from 'react'
-// import { pageInAnimation } from './utils/animations';
+import { pageInAnimation } from './utils/animations';
 import { AppBarProvider } from './contexts/appbar_context'
+import { UserContextProvider } from './contexts/user_context'
 
 
 function App() {
@@ -15,7 +16,7 @@ function App() {
   
   useEffect(() => {
     if(!played) {
-      // pageInAnimation();
+      pageInAnimation();
       setPlayed(true);
     }
   }, [played])
@@ -23,19 +24,21 @@ function App() {
 
   return (
     <>
-      <BrowserRouter>
-        <AppBarProvider>
-          <AppBar/>
-          <div className="bg-white relative rounded-md w-full flex flex-col items-center justify-center">
-              <Routes>
-                <Route path='/login' element={<Login />} />
-                <Route path='/' element={<Home />} />
-                <Route path='/edit' element={<EditCard />} />
-              </Routes>
-              {/* <Splashscreen /> */}
-          </div>
-        </AppBarProvider>          
-      </BrowserRouter>
+      <UserContextProvider>
+        <BrowserRouter>
+          <AppBarProvider>
+            <AppBar/>
+            <div className="bg-white relative rounded-md w-full flex flex-col items-center justify-center">
+                <Routes>
+                  <Route path='/login' element={<Login />} />
+                  <Route path='/' element={<Home />} />
+                  <Route path='/edit' element={<EditCard />} />
+                </Routes>
+            </div>
+          </AppBarProvider>          
+        </BrowserRouter>
+      </UserContextProvider>
+      <Splashscreen />
     </>
   )
 }

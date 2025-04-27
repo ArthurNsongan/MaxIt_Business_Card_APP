@@ -47,11 +47,11 @@ export const pageInAnimation = () => {
 export const pageInTransition = () => {
 
   const loaderContainer = document.querySelectorAll(".splashscreen");
-  const loaderIcon = document.getElementById("loaderIcon");
-  const splashscreenText = document.getElementById("splashscreen-text");
-  const splashscreenContainer = document.getElementById("splashscreen-container");
+  // const loaderIcon = document.getElementById("loaderIcon");
+  // const splashscreenText = document.getElementById("splashscreen-text");
+  // const splashscreenContainer = document.getElementById("splashscreen-container");
   const bars = document.getElementsByClassName("splashscreen-bars");
-  const splashscreenODC = document.getElementById("splashscreen-odc")
+  // const splashscreenODC = document.getElementById("splashscreen-odc")
 
   const tl = gsap.timeline();
   tl

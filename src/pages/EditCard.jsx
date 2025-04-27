@@ -1,7 +1,25 @@
 import React, { useEffect, useState } from 'react'
 import { useAppBar } from '../contexts/appbar_context';
 import { useRef } from 'react';
-import { Facebook, LinkedinIcon, Mail, MailIcon, MapPin, PhoneCallIcon, Plus, X } from 'lucide-react';
+import { Image, ImageIcon, Landmark, Mail, MailIcon, MapPin, PhoneCallIcon, Plus, User, X } from 'lucide-react';
+import { 
+    Facebook, 
+    Twitter, 
+    Instagram, 
+    Linkedin as LinkedinIcon, 
+    Youtube,
+    Globe 
+  } from 'lucide-react'; // or your preferred icon library
+import EditPreviewCard from './EditPreviewCard';
+
+export const formatSocialMedia = (p) => {
+    switch(p) {
+        case "facebook": return "Facebook";
+        case "twitter": return "X";
+        case "instagram": return "Instagram";
+        case "linkedin": return "LinkedIn";
+    }
+}
 
 function EditCard() {
 
@@ -36,6 +54,12 @@ function EditCard() {
   const colorOptions = [
     '#4361ee', '#3a0ca3', '#7209b7', '#f72585', '#4cc9f0', '#4895ef'
   ];
+
+  const textColorOptions = [
+    { value: '#1e1e24', label: 'Dark' },
+    { value: '#ffffff', label: 'White' },
+    { value: '#f8f9fa', label: 'Light' }
+  ];
   
   const fontOptions = [
     { value: "'Inter', sans-serif", label: "Inter (modern)" },
@@ -47,6 +71,8 @@ function EditCard() {
 
   const [errors, setErrors] = useState({});
   const fileInputRef = useRef(null);
+  const companyLogoRef = useRef(null);
+  const coverImageRef = useRef(null);
 
   useEffect(() => {
     setTitle('EditCard');
@@ -64,30 +90,36 @@ function EditCard() {
         id: 1
     },
     {
-        name: "Contact",
-        title: "Contact",
+        name: "Coordonnées",
+        title: "Donnez-vous des moyens de vous contacter",
         id: 2
     },
     {
         name: "Réseaux sociaux",
-        title: "Réseaux sociaux",
+        title: "Connectons nous et échangeons sur les réseaux sociaux",
         id: 3
     },
     {
-        name: "Personnalisation",
-        title: "Personnalisation",
+        name: "Images",
+        title: "Enrichissez votre carte digitale par des images",
         id: 4
+    },
+    {
+        name: "Personnalisation",
+        title: "Donnez vie à une carte digitale qui vous ressemble",
+        id: 5
     }
   ]
 
   const [currentStep, setCurrentStep] = useState(1);
+  const [cardType, setCardType] = useState("basic")
 
   const getStepLabel = (step) => {
     return FormSteps.find(t => t.id == step);
   }
 
   const nextStep = () => {
-    if(currentStep < 4) {
+    if(currentStep < 6) {
         setCurrentStep(currentStep + 1)
     }
   }
@@ -152,8 +184,7 @@ function EditCard() {
   };
 
   const [socialLinks, setSocialLinks] = useState([
-    { platform: 'Facebook', username: 'fready_oyono' },
-    { platform: 'LinkedIn', username: 'fready_oyono' }
+
   ]);
   
   const [isAdding, setIsAdding] = useState(false);
@@ -166,8 +197,35 @@ function EditCard() {
       setNewPlatform('');
       setNewUsername('');
       setIsAdding(false);
+      setFormData({...formData, ...updateSocialMediaLinks()})
+      console.log(formData);
     }
   };
+
+  const updateSocialMediaLinks = () => {
+    let formDataTemp = {
+        linkedin_url: "",
+        twitter_url: "",
+        facebook_url: "",
+        instagram_url: ""
+    }
+    console.log("socialLinks", socialLinks)
+    socialLinks.forEach((platformTemp) => {
+        if(platformTemp.platform == "linkedin") {
+            formDataTemp.linkedin_url = platformTemp.username
+        }
+        else if(platformTemp.platform == "facebook") {
+            formDataTemp.facebook_url = platformTemp.username
+        }
+        else if(platformTemp.platform == "twitter") {
+            formDataTemp.twitter_url = platformTemp.username
+        }
+        else if(platformTemp.platform == "instagram") {
+            formDataTemp.instagram_url = platformTemp.username
+        }
+    });
+    return formDataTemp;
+  }
 
   const removeSocial = (index) => {
     setSocialLinks(socialLinks.filter((_, i) => i !== index));
@@ -176,10 +234,20 @@ function EditCard() {
 
   return (
     <>
-        <div className='w-full min-h-[calc(100dvh-60px)]'>
+        {
+            currentStep == 6 ?
+            (
+                <EditPreviewCard card_type={cardType} preview_data={formData}/>
+            )
+            :
+            (
+                <div className='w-full min-h-[calc(100dvh-60px)] mt-[30px]'>
             <div className='flex flex-col items-center'>
-                <div className='flex items-center justify-center w-[80%] h-[60px] text-xl my-2 font-bold'>
-                    <span className='text-center'>{getStepLabel(currentStep)?.title}</span>
+                <div className='flex items-center flex-col justify-center w-[80%] h-[60px] text-xl my-2 font-bold'>
+                    {/* <span className='text-center'>{getStepLabel(currentStep)?.title}</span> */}
+                    <h2 className="text-2xl font-bold mb-2">{getStepLabel(currentStep)?.name}</h2>
+                    <span className="text-gray-600 text-[18px] leading-5 mb-6 text-center scheme-light-dark">{getStepLabel(currentStep)?.title}</span>
+
                 </div>
             </div>
             <div className='flex items-center mt-2 mb-12 mx-3'>
@@ -187,6 +255,7 @@ function EditCard() {
                 <div className={`w-full rounded-xs mx-1 h-[10px] ${(currentStep > 2 ? "bg-primary" : "bg-secondary")}`}></div>
                 <div className={`w-full rounded-xs mx-1 h-[10px] ${(currentStep > 3 ? "bg-primary" : "bg-secondary")}`}></div>
                 <div className={`w-full rounded-xs mx-1 h-[10px] ${(currentStep > 4 ? "bg-primary" : "bg-secondary")}`}></div>
+                <div className={`w-full rounded-xs mx-1 h-[10px] ${(currentStep > 5 ? "bg-primary" : "bg-secondary")}`}></div>
             </div>
             <form onSubmit={handleSubmit} className='min-h-full'>
                 {/* Step 1: Basic Info */}
@@ -198,7 +267,7 @@ function EditCard() {
                         <div className="flex flex-col md:flex-row gap-6 mb-6">
                         <div className="flex-1">
                             <label htmlFor="first_name" className={`block mb-2 font-medium ${!formData.first_name ? "after:content-['_*'] after:text-red-500" : ""}`}>
-                            First Name
+                            Prénom
                             </label>
                             <input
                             type="text"
@@ -214,7 +283,7 @@ function EditCard() {
                         
                         <div className="flex-1">
                             <label htmlFor="last_name" className={`block mb-2 font-medium ${!formData.last_name ? "after:content-['_*'] after:text-red-500" : ""}`}>
-                            Last Name
+                            Nom
                             </label>
                             <input
                             type="text"
@@ -230,7 +299,7 @@ function EditCard() {
                         </div>
 
                         <div className="mb-6">
-                        <label htmlFor="job_title" className="block mb-2 font-medium">Job Title</label>
+                        <label htmlFor="job_title" className="block mb-2 font-medium">Votre Poste Actuel</label>
                         <input
                             type="text"
                             id="job_title"
@@ -243,7 +312,7 @@ function EditCard() {
                         </div>
 
                         <div className="mb-6">
-                        <label htmlFor="company" className="block mb-2 font-medium">Company</label>
+                        <label htmlFor="company" className="block mb-2 font-medium">Entreprise</label>
                         <input
                             type="text"
                             id="company"
@@ -255,13 +324,13 @@ function EditCard() {
                         </div>
 
                         <div className="mb-6">
-                        <label htmlFor="bio" className="block mb-2 font-medium">Biography</label>
+                        <label htmlFor="bio" className="block mb-2 font-medium">Parlez-nous de vous</label>
                         <textarea
                             id="bio"
                             name="bio"
                             value={formData.bio}
                             onChange={handleChange}
-                            placeholder="Describe yourself in a few words..."
+                            placeholder="Decrivez vous en quelques mots..."
                             className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#4361ee] focus:border-transparent min-h-[120px]"
                         />
                         </div>
@@ -272,16 +341,13 @@ function EditCard() {
                     {/* Step 2: Contact Information */}
                     {currentStep === 2 && (
                     <div className="animate-fadeIn">
-                        <h2 className="text-2xl font-bold mb-2">Contact Information</h2>
-                        <p className="text-gray-600 mb-6">How can people contact you?</p>
-
                         <div className="mb-6">
                         <label htmlFor="phone_number" className={`block mb-2 font-medium ${!formData.phone_number ? "after:content-['_*'] after:text-red-500" : ""}`}>
-                            Phone Number
+                            Numéro de téléphone
                         </label>
                         <div className="relative">
                             <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
-                            <PhoneCallIcon />
+                                <PhoneCallIcon />
                             </div>
                             <input
                             type="tel"
@@ -291,7 +357,7 @@ function EditCard() {
                             onChange={handleChange}
                             className={`w-full pl-10 pr-4 py-3 rounded-lg border ${errors.phone_number ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-[#4361ee] focus:border-transparent`}
                             required
-                            placeholder="+1 234 567 8900"
+                            placeholder="6 99 98 97 96"
                             />
                         </div>
                         {errors.phone_number && <p className="mt-1 text-sm text-red-500">{errors.phone_number}</p>}
@@ -317,7 +383,7 @@ function EditCard() {
                         </div>
 
                         <div className="mb-6">
-                            <label htmlFor="address" className="block mb-2 font-medium">Address</label>
+                            <label htmlFor="address" className="block mb-2 font-medium">Adresse</label>
                             <div className="relative">
                                 <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
                                 <MapPin />
@@ -336,7 +402,7 @@ function EditCard() {
 
                         <div className="flex flex-col md:flex-row gap-6 mb-6">
                             <div className="flex-1">
-                                <label htmlFor="city" className="block mb-2 font-medium">City</label>
+                                <label htmlFor="city" className="block mb-2 font-medium">Ville</label>
                                 <input
                                 type="text"
                                 id="city"
@@ -347,7 +413,7 @@ function EditCard() {
                                 />
                             </div>
                             <div className="flex-1">
-                                <label htmlFor="country" className="block mb-2 font-medium">Country</label>
+                                <label htmlFor="country" className="block mb-2 font-medium">Pays</label>
                                 <input
                                 type="text"
                                 id="country"
@@ -360,7 +426,7 @@ function EditCard() {
                         </div>
 
                         <div className="mb-6">
-                            <label htmlFor="website_url" className="block mb-2 font-medium">Website</label>
+                            <label htmlFor="website_url" className="block mb-2 font-medium">Site Web</label>
                             <input
                                 type="url"
                                 id="website_url"
@@ -368,7 +434,7 @@ function EditCard() {
                                 value={formData.website_url}
                                 onChange={handleChange}
                                 className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#4361ee] focus:border-transparent"
-                                placeholder="https://yourwebsite.com"
+                                placeholder="www.votre_siteweb.com"
                             />
                         </div>
                     </div>
@@ -377,12 +443,8 @@ function EditCard() {
                     {/* Step 3: Social Media */}
                     {currentStep === 3 && (
                     <div className="animate-fadeIn">
-                        <div className="max-w-md mx-auto p-6">
-                            <h2 className="text-2xl font-bold mb-6 text-center">Modifier la carte de visite digitale</h2>
-                            
-                            <div className="mb-8">
-                                <h3 className="text-lg font-medium mb-4">Liens vers vos réseaux sociaux</h3>
-                                
+                        <div className="max-w-md mx-auto min-h-[70dvh] p-6">                            
+                            <div className="mb-8">                                
                                 <div className="space-y-3 mb-6">
                                 {socialLinks.map((social, index) => (
                                     <div 
@@ -390,13 +452,19 @@ function EditCard() {
                                     className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm border border-gray-100 transition-all hover:shadow-md"
                                     >
                                     <div className="flex items-center">
-                                        {social.platform === 'Facebook' ? (
+                                        {social.platform === 'facebook' ? (
                                         <Facebook className="text-blue-600 mr-3" size={20} />
-                                        ) : (
+                                        ) : social.platform === 'instagram' ? (
+                                        <Instagram className="text-pink-600 mr-3" size={20} />
+                                        ) : social.platform === 'linkedin' ? (
                                         <LinkedinIcon className="text-blue-500 mr-3" size={20} />
+                                        ) : social.platform === 'youtube' ? (
+                                        <Youtube className="text-red-600 mr-3" size={20} />
+                                        ) : (
+                                         <Globe className="text-gray-500 mr-3" size={20} /> // Default icon
                                         )}
                                         <div>
-                                        <p className="font-medium">{social.platform}</p>
+                                        <p className="font-medium">{formatSocialMedia(social.platform)}</p>
                                         <p className="text-gray-500 text-sm">@{social.username}</p>
                                         </div>
                                     </div>
@@ -412,41 +480,46 @@ function EditCard() {
 
                                 {isAdding ? (
                                 <div className="mb-4 p-3 bg-gray-50 rounded-lg animate-fadeIn">
-                                    <div className="grid grid-cols-2 gap-3 mb-3">
-                                    <input
-                                        type="text"
+                                    <div className="flex flex-col gap-3 mb-3">
+                                    <select
                                         value={newPlatform}
                                         onChange={(e) => setNewPlatform(e.target.value)}
-                                        placeholder="Réseau social"
-                                        className="p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    />
+                                        className="block w-full p-2 pr-8 border border-gray-300 rounded appearance-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                                    >
+                                        <option>Sélectionner le réseau</option>
+                                        {formData.facebook_url?.length == 0 ? <option value="facebook">Facebook</option> : <></>}
+                                        {formData.twitter_url?.length == 0 ? <option value="twitter">Twitter</option> : <></>}
+                                        {formData.instagram_url?.length == 0 ? <option value="instagram">Instagram</option> : <></>}
+                                        {formData.linkedin_url?.length == 0 ? <option value="linkedin">LinkedIn</option> : <></>}
+                                        {/* {formData.linked_url?.length > 0 ? <option value="youtube">YouTube</option> : <></>} */}
+                                    </select>
                                     <input
                                         type="text"
                                         value={newUsername}
                                         onChange={(e) => setNewUsername(e.target.value)}
-                                        placeholder="Nom d'utilisateur"
+                                        placeholder="Lien vers votre page"
                                         className="p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     />
                                     </div>
-                                    <div className="flex justify-end space-x-2">
-                                    <button 
+                                    <div className="flex justify-center space-x-2">
+                                    <button type='button'
                                         onClick={() => setIsAdding(false)}
-                                        className="px-3 py-1 text-gray-500 hover:text-gray-700 transition-colors"
+                                        className="w-full border border-gray rounded px-3 py-1 text-gray-500 hover:text-gray-700 transition-colors"
                                     >
                                         Annuler
                                     </button>
-                                    <button 
-                                        onClick={handleAddSocial}
-                                        className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                                    <button type='button'
+                                        onClick={() => handleAddSocial()}
+                                        className="w-full border bg-primary px-3 py-1 text-white rounded transition-colors"
                                     >
                                         Ajouter
                                     </button>
                                     </div>
                                 </div>
                                 ) : (
-                                <button
+                                <button type='button'
                                     onClick={() => setIsAdding(true)}
-                                    className="flex items-center text-blue-500 hover:text-blue-600 mb-6 transition-colors"
+                                    className="flex w-full items-center justify-center py-2 rounded bg-primary hover:bg-primary text-white text-center mb-6 transition-colors"
                                 >
                                     <Plus className="mr-2" size={18} />
                                     Ajouter un réseau social
@@ -460,22 +533,173 @@ function EditCard() {
                     {/* Step 4: Customization */}
                     {currentStep === 4 && (
                     <div className="animate-fadeIn">
+
                         <div className="mb-6">
-                            <label className="block mb-3 font-medium">Background Color</label>
-                            <div className="flex gap-4">
-                                {colorOptions.map((color) => (
-                                <button
-                                    key={color.value}
-                                    type="button"
-                                    className={`w-10 h-10 rounded-lg ${color.value} ${formData.background_color === color.value ? 'ring-2 ring-offset-2 ring-[#4361ee]' : ''} transition-all`}
-                                    onClick={() => setFormData(prev => ({ ...prev, background_color: color.value }))}
-                                    aria-label={color.label}
-                                />
-                                ))}
+                        <label className="block mb-3 font-medium">Profile Photo</label>
+                        <div className="flex items-center gap-4">
+                            {formData.profile_photo_url ? (
+                            <img 
+                                src={formData.profile_photo_url} 
+                                alt="Profile" 
+                                className="w-20 h-20 rounded-full object-cover border-2 border-gray-300"
+                            />
+                            ) : (
+                            <div className="w-20 h-20 rounded-full bg-gray-200 border-2 border-gray-300 flex items-center justify-center">
+                                <User className="text-gray-400 w-8 h-8" />
                             </div>
+                            )}
+                            <input
+                            type="file"
+                            id="profile_photo_url"
+                            name="profile_photo_url"
+                            onChange={(e) => handleFileUpload(e, 'profile_photo_url')}
+                            accept="image/*"
+                            className="hidden"
+                            ref={fileInputRef}
+                            />
+                            <button
+                            type="button"
+                            onClick={() => fileInputRef.current?.click()}
+                            className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors"
+                            >
+                            {formData.profile_photo_url ? 'Change Photo' : 'Upload Photo'}
+                            </button>
+                        </div>
                         </div>
 
-                        {/* More customization options... */}
+                        {/* Company Logo Upload */}
+                        <div className="mb-6">
+                        <label className="block mb-3 font-medium">Company Logo</label>
+                        <div className="flex items-center gap-4">
+                            {formData.company_logo_url ? (
+                            <img 
+                                src={formData.company_logo_url} 
+                                alt="Company Logo" 
+                                className="w-20 h-20 object-contain border-2 border-gray-300 bg-white p-2 rounded-lg"
+                            />
+                            ) : (
+                            <div className="w-20 h-20 bg-gray-200 border-2 border-gray-300 rounded-lg flex items-center justify-center">
+                                <Landmark className="text-gray-400 w-8 h-8" />
+                            </div>
+                            )}
+                            <input
+                            type="file"
+                            id="company_logo_url"
+                            name="company_logo_url"
+                            onChange={(e) => handleFileUpload(e, 'company_logo_url')}
+                            accept="image/*"
+                            className="hidden"
+                            ref={companyLogoRef}
+                            />
+                            <button
+                            type="button"
+                            onClick={() => companyLogoRef.current?.click()}
+                            className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors"
+                            >
+                            {formData.company_logo_url ? 'Change Logo' : 'Upload Logo'}
+                            </button>
+                        </div>
+                        </div>
+
+                            {/* Cover Image Upload */}
+                            <div className="mb-6">
+                            <label className="block mb-3 font-medium">Cover Image</label>
+                            <div className="flex flex-col gap-4">
+                                {formData.cover_image_url ? (
+                                <img 
+                                    src={formData.cover_image_url} 
+                                    alt="Cover" 
+                                    className="w-full h-32 object-cover rounded-lg border-2 border-gray-300"
+                                />
+                                ) : (
+                                <div className="w-full h-32 bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center">
+                                    <ImageIcon className="text-gray-400 w-8 h-8" />
+                                </div>
+                                )}
+                                <input
+                                type="file"
+                                id="cover_image_url"
+                                name="cover_image_url"
+                                onChange={(e) => handleFileUpload(e, 'cover_image_url')}
+                                accept="image/*"
+                                className="hidden"
+                                ref={coverImageRef}
+                                />
+                                <button
+                                type="button"
+                                onClick={() => coverImageRef.current?.click()}
+                                className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors self-start"
+                                >
+                                {formData.cover_image_url ? 'Change Cover' : 'Upload Cover'}
+                                </button>
+                            </div>
+                            </div>
+                        
+                    </div>
+                    )}
+
+                    {/* Step 5: Customization */}
+                    {currentStep === 5 && (
+                    <div className="animate-fadeIn">
+
+                        <div className="mb-6">
+                        <label className="block mb-3 font-medium">Background Color</label>
+                        <div className="flex flex-wrap gap-3">
+                            {colorOptions.map((color, colorIndex) => (
+                            <button
+                                key={"cb_" + colorIndex}
+                                type="button"
+                                style={{backgroundColor: color}}
+                                className={`w-10 h-10 rounded-lg ${
+                                formData.background_color === color 
+                                    ? 'ring-2 ring-offset-2 ring-[var(--primary)]' 
+                                    : ''
+                                } transition-all hover:scale-105`}
+                                onClick={() => setFormData(prev => ({ ...prev, background_color: color }))}
+                                title={color}
+                                aria-label={color}
+                            />
+                            ))}
+                        </div>
+                        </div>
+
+                        <div className="mb-6">
+                        <label className="block mb-3 font-medium">Text Color</label>
+                        <div className="flex flex-wrap gap-3">
+                            {textColorOptions.map((color) => (
+                            <button
+                                key={color.value}
+                                type="button"
+                                style={{backgroundColor: color.value}}
+                                className={`w-10 h-10 rounded-lg ${
+                                formData.text_color === color.value
+                                    ? 'ring-2 ring-offset-2 ring-[var(--primary)]' 
+                                    : ''
+                                } border border-gray-300 transition-all hover:scale-105`}
+                                onClick={() => setFormData(prev => ({ ...prev, text_color: color.value }))}
+                                title={color.value}
+                                aria-label={color.value}
+                            />
+                            ))}
+                        </div>
+                        </div>
+
+                        <div className="mb-6">
+                        <label htmlFor="font_family" className="block mb-2 font-medium">Font Family</label>
+                        <select
+                            id="font_family"
+                            name="font_family"
+                            value={formData.font_family}
+                            onChange={handleChange}
+                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#4361ee] focus:border-transparent"
+                        >
+                            {fontOptions.map((font) => (
+                            <option key={font.value} value={font.value}>{font.label}</option>
+                            ))}
+                        </select>
+                        </div>
+
+                        
                     </div>
                     )}
 
@@ -485,9 +709,11 @@ function EditCard() {
             </form>
             <div className='flex items-center bg-white py-2 rounded-t-lg inset-shadow-sm w-full sticky z-50 bottom-0 justify-between'>
                 <button onClick={prevStep} disabled={currentStep == 1} className="w-full m-1 rounded-lg text-white bg-black disabled:bg-secondary py-2 px-1">Précédent</button>
-                <button onClick={nextStep} disabled={currentStep == 4} className="w-full m-1 rounded-lg text-white bg-primary py-2 px-1">Suivant</button>
+                <button onClick={nextStep} disabled={currentStep == 6} className="w-full m-1 rounded-lg text-white bg-primary py-2 px-1">Suivant</button>
             </div>
         </div>
+            )
+        }
     </>
   )
 }
