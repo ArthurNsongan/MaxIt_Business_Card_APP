@@ -50,9 +50,9 @@ export function UserContextProvider({ children }) {
     setLoading(false);
   }, []);
 
-  useEffect(() => {
+  // useEffect(() => {
 
-  }, [user_card])
+  // }, [user_card])
   
   // Login function with phone number validation
   const login = (userData) => {

@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { use, useEffect, useState } from 'react'
 import { useAppBar } from '../contexts/appbar_context';
 import { useRef } from 'react';
-import { Image, ImageIcon, Landmark, Mail, MailIcon, MapPin, PhoneCallIcon, Plus, User, X } from 'lucide-react';
+import { Eye, Image, ImageIcon, Landmark, Mail, MailIcon, MapPin, PhoneCallIcon, Plus, Save, User, X } from 'lucide-react';
 import { 
     Facebook, 
     Twitter, 
@@ -11,6 +11,9 @@ import {
     Globe 
   } from 'lucide-react'; // or your preferred icon library
 import EditPreviewCard from './EditPreviewCard';
+import { useUser } from '../contexts/user_context';
+import useApi from '../hooks/useApi';
+import userService from '../services/user_service';
 
 export const formatSocialMedia = (p) => {
     switch(p) {
@@ -19,6 +22,11 @@ export const formatSocialMedia = (p) => {
         case "instagram": return "Instagram";
         case "linkedin": return "LinkedIn";
     }
+}
+
+function goToTop() {
+    // Do whatever "Next" functionality you have here
+    window.scrollTo({ top: 0 }); // Scrolls to the top smoothly
 }
 
 function EditCard() {
@@ -74,14 +82,36 @@ function EditCard() {
   const companyLogoRef = useRef(null);
   const coverImageRef = useRef(null);
 
+  const { user_card, user } = useUser();
+  const phoneNumber = user?.phoneNumber.replace("237", "") || null;
+
   useEffect(() => {
     setTitle('EditCard');
     setShowBackButton(true);
-    
+    console.log("phoneNumber", phoneNumber)
+    setFormData(prev => ({ ...prev, phone_number: phoneNumber }));
     return () => {
       setActions(null);
     };
   }, [setTitle, setShowBackButton, setActions]);
+
+  const { execute: saveData, loading, error} = useApi(userService.create_user_card_route);
+
+  useEffect(() => {
+    if (user_card) {
+      setFormData(prev => ({
+        ...prev,
+        ...user_card
+      }));
+    } else if(user?.phoneNumber){
+        console.log("currentuser", user , user_card);
+        // const response = saveData({
+        //     ...formData,
+        //     phone_number: phoneNumber,
+        // });
+        // console.log("response", response)
+    }
+  });
 
   const FormSteps = [
     {
@@ -119,8 +149,12 @@ function EditCard() {
   }
 
   const nextStep = () => {
-    if(currentStep < 6) {
-        setCurrentStep(currentStep + 1)
+    // Validate the current step before proceeding
+    if(validateStep(currentStep)) {
+        if(currentStep < 6) {
+            setCurrentStep(currentStep + 1)
+        }
+        goToTop();
     }
   }
 
@@ -128,6 +162,7 @@ function EditCard() {
     if(currentStep > 1) {
         setCurrentStep(currentStep - 1)
     }
+    goToTop();
   }
 
   // Form validation
@@ -140,13 +175,14 @@ function EditCard() {
     }
     
     if (step === 2) {
-      if (!formData.phone_number.trim()) newErrors.phone_number = 'Phone number is required';
+    //   if (!formData.phone_number.trim()) newErrors.phone_number = 'Phone number is required';
       if (formData.email && !/^\S+@\S+\.\S+$/.test(formData.email)) {
         newErrors.email = 'Please enter a valid email';
       }
     }
     
     setErrors(newErrors);
+    console.log("newErrors", newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
@@ -159,6 +195,8 @@ function EditCard() {
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
+
+    console.log("formData", formData)
   };
 
   // Handle file uploads
@@ -176,8 +214,17 @@ function EditCard() {
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (validateStep(currentStep)) {
-      console.log('Form data to submit:', formData);
+    e.stopPropagation();
+
+    console.log('Form data to submit:', formData);
+    
+    if (true) {
+      console.log('Form data to submit 2:', formData);
+      const response = saveData({
+            ...formData,
+            phone_number: phoneNumber,
+        });
+        console.log("response", response)
       // Here you would typically send data to your backend API
       alert('Profile saved successfully!');
     }
@@ -193,24 +240,25 @@ function EditCard() {
 
   const handleAddSocial = () => {
     if (newPlatform && newUsername) {
-      setSocialLinks([...socialLinks, { platform: newPlatform, username: newUsername }]);
+      var socialLinksTemp = [...socialLinks, { platform: newPlatform, username: newUsername }]
+      setSocialLinks(socialLinksTemp);
       setNewPlatform('');
       setNewUsername('');
       setIsAdding(false);
-      setFormData({...formData, ...updateSocialMediaLinks()})
+      setFormData({...formData, ...updateSocialMediaLinks(socialLinksTemp)})
       console.log(formData);
     }
   };
 
-  const updateSocialMediaLinks = () => {
+  const updateSocialMediaLinks = (temp) => {
     let formDataTemp = {
         linkedin_url: "",
         twitter_url: "",
         facebook_url: "",
         instagram_url: ""
     }
-    console.log("socialLinks", socialLinks)
-    socialLinks.forEach((platformTemp) => {
+    console.log("socialLinks", temp)
+    temp.forEach((platformTemp) => {
         if(platformTemp.platform == "linkedin") {
             formDataTemp.linkedin_url = platformTemp.username
         }
@@ -237,7 +285,10 @@ function EditCard() {
         {
             currentStep == 6 ?
             (
-                <EditPreviewCard card_type={cardType} preview_data={formData}/>
+                <>
+                    <EditPreviewCard card_type={cardType} preview_data={formData}/>
+                    <button className='bg-red-500 h-12 w-full rounded' onClick={() => { setCurrentStep(currentStep-1) }}>Prev</button>
+                </> 
             )
             :
             (
@@ -257,7 +308,7 @@ function EditCard() {
                 <div className={`w-full rounded-xs mx-1 h-[10px] ${(currentStep > 4 ? "bg-primary" : "bg-secondary")}`}></div>
                 <div className={`w-full rounded-xs mx-1 h-[10px] ${(currentStep > 5 ? "bg-primary" : "bg-secondary")}`}></div>
             </div>
-            <form onSubmit={handleSubmit} className='min-h-full'>
+            <form className='min-h-full'>
                 {/* Step 1: Basic Info */}
 
                 <div className="mx-4 pb-15">
@@ -353,10 +404,11 @@ function EditCard() {
                             type="tel"
                             id="phone_number"
                             name="phone_number"
-                            value={formData.phone_number}
+                            value={phoneNumber}
                             onChange={handleChange}
                             className={`w-full pl-10 pr-4 py-3 rounded-lg border ${errors.phone_number ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-[#4361ee] focus:border-transparent`}
                             required
+                            disabled="trues"
                             placeholder="6 99 98 97 96"
                             />
                         </div>
@@ -709,7 +761,12 @@ function EditCard() {
             </form>
             <div className='flex items-center bg-white py-2 rounded-t-lg inset-shadow-sm w-full sticky z-50 bottom-0 justify-between'>
                 <button onClick={prevStep} disabled={currentStep == 1} className="w-full m-1 rounded-lg text-white bg-black disabled:bg-secondary py-2 px-1">Précédent</button>
-                <button onClick={nextStep} disabled={currentStep == 6} className="w-full m-1 rounded-lg text-white bg-primary py-2 px-1">Suivant</button>
+                {
+                    (currentStep > 5
+                        ? <button onClick={nextStep} disabled={currentStep == 6} className="w-full m-1 flex items-center justify-center rounded-lg text-white bg-primary py-2 px-1">{currentStep == 5 ? <><Save size={20} className="me-1"/>Enregistrer</> :  "Suivant"}</button>
+                        : <button onClick={handleSubmit} type={currentStep == 5 ? "submit" : "button"} disabled={currentStep == 6} className="w-full m-1 flex items-center justify-center rounded-lg text-white bg-primary py-2 px-1">{currentStep == 5 ? <><Save size={20} className="me-1"/>Enregistrer</> :  "Suivant"}</button>
+                    )
+                }
             </div>
         </div>
             )
