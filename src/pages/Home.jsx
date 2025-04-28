@@ -1,9 +1,7 @@
 import { ArrowRight } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useUser } from '../contexts/user_context';
-import { useNavigate } from 'react-router-dom';
-import useApi from '../hooks/useApi';
-import userService from '../services/user_service';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function Home() {
 
@@ -14,25 +12,7 @@ export default function Home() {
   const [Error, setError] = useState('');
 
   const { user, login, validatePhoneNumber } = useUser();
-
   
-  const { execute: getData, /*loading, */ error} = useApi(userService.get_user_card_route);
-
-  useEffect(() => {
-    async function getUserData() {
-      if(user != null) {
-        const { data, error } = await getData(user.phoneNumber);
-        if(data != null) {
-          console.log(")data)", data)
-        }
-        else {
-          console.log(")error)", error)
-        }
-      }
-    }
-    getUserData()
-  }, [getData, user])
-
   const handlePhoneSubmit = (e) => {
     e.preventDefault();
     setError('');
@@ -84,7 +64,7 @@ export default function Home() {
                   onChange={(e) => setPhoneNumber(e.target.value)}
                   required
                 />
-                {error?.length > 0 ? <span className='text-red-500'>{error}</span> : <></>}
+                {Error?.length > 0 ? <span className='text-red-500'>{Error}</span> : <></>}
               </div>
               <p className="mt-1 text-xs text-gray-500">
                 Format: 6XXXXXXXX ou +237 6XXXXXXXX
@@ -98,11 +78,11 @@ export default function Home() {
           </form>)
           :
           (
-            <a href='/edit' type="button" className='bg-primary rounded-xl h-[56px] flex items-center justify-between text-white text-center'>
+            <Link href='/edit' type="button" className='bg-primary rounded-xl h-[56px] flex items-center justify-between text-white text-center'>
               <span>&nbsp;</span>
               <span className='text-bold mx-4 px-12 tracking-wider'>Commencer</span> 
               <ArrowRight size={30} className='mr-4'/>
-            </a>
+            </Link>
           )
         }
       </div>

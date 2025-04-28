@@ -1,5 +1,7 @@
 // UserContext.js
-import { createContext, useState, useContext, useEffect } from 'react';
+import { createContext, useState, useContext, useEffect, use } from 'react';
+import userService from '../services/user_service';
+import useApi from '../hooks/useApi';
 
 // Create the context
 const UserContext = createContext();
@@ -40,8 +42,15 @@ export function UserContextProvider({ children }) {
     const storedUser = localStorage.getItem(USER_STORAGE_KEY);
     if (storedUser) {
       try {
-        setUser(JSON.parse(storedUser));
-        console.log("storedUser", storedUser)
+        var storedUserObj = JSON.parse(storedUser);
+        if(storedUserObj.phoneNumber?.startsWith('237')) {
+          storedUserObj.phoneNumber = storedUserObj.phoneNumber.replace("237", '');
+        } else if(storedUserObj?.phoneNumber?.startsWith('+237')) {
+          storedUserObj.phoneNumber = storedUserObj.phoneNumber.replace("+237", '');
+        }
+        // Validate the phone number format
+        setUser(storedUserObj);
+        console.log("storedUser", storedUserObj)
       } catch (error) {
         console.error('Failed to parse user data from localStorage:', error);
         localStorage.removeItem(USER_STORAGE_KEY);
@@ -49,6 +58,28 @@ export function UserContextProvider({ children }) {
     }
     setLoading(false);
   }, []);
+
+  useEffect(() => {
+      console.log("user_carx", user_card)
+  })
+
+  const { execute: getData, error} = useApi(userService.get_user_card_route);
+
+  useEffect(() => {
+    async function getUserData() {
+      if(user != null && user_card == null) {
+        const { data, error } = await getData(user.phoneNumber);
+        if(data != null) {
+          console.log(")data)", data)
+          setUserCard(data);
+        }
+        else {
+          console.log(")error)", error)
+        }
+      }
+    }
+    getUserData()
+  }, [user, user_card]);
 
   // useEffect(() => {
 
@@ -82,10 +113,6 @@ export function UserContextProvider({ children }) {
     // Remove from localStorage
     localStorage.removeItem(USER_STORAGE_KEY);
   };
-
-  const gatherUserCarData = (user_card_datas) => {
-    setUserCard(user_card_datas);
-  }
   
   // Value to be provided to consumers
   const value = {
@@ -96,7 +123,7 @@ export function UserContextProvider({ children }) {
     isAuthenticated: !!user,
     loading,
     validatePhoneNumber: isCameroonPhoneNumber,
-    gatherUserCarData
+    setUserCard
   };
   
   return (

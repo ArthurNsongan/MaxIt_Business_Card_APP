@@ -1,7 +1,7 @@
-import React, { use, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useAppBar } from '../contexts/appbar_context';
 import { useRef } from 'react';
-import { Eye, Image, ImageIcon, Landmark, Mail, MailIcon, MapPin, PhoneCallIcon, Plus, Save, User, X } from 'lucide-react';
+import { Eye, Image, ImageIcon, Landmark, Loader2, Mail, MailIcon, MapPin, PhoneCallIcon, Plus, Save, User, X } from 'lucide-react';
 import { 
     Facebook, 
     Twitter, 
@@ -82,8 +82,13 @@ function EditCard() {
   const companyLogoRef = useRef(null);
   const coverImageRef = useRef(null);
 
-  const { user_card, user } = useUser();
+  const { user_card, user, setUserCard } = useUser();
   const phoneNumber = user?.phoneNumber.replace("237", "") || null;
+
+  const gatherUserCardData = async (user_card_datas) => {
+    await setUserCard(user_card_datas);
+ }
+
 
   useEffect(() => {
     setTitle('EditCard');
@@ -95,10 +100,22 @@ function EditCard() {
     };
   }, [setTitle, setShowBackButton, setActions]);
 
-  const { execute: saveData, loading, error} = useApi(userService.create_user_card_route);
+  let userCreateUpdateService = null
+
+  if(user_card) {
+    userCreateUpdateService = (userService.update_user_card_route);
+  }
+  else {
+    userCreateUpdateService = (userService.create_user_card_route);
+  }
+
+  const { execute: saveData, loadingSave, errorSave} = useApi(userCreateUpdateService);
+
 
   useEffect(() => {
     if (user_card) {
+        console.log("currentuser", user , user_card);
+
       setFormData(prev => ({
         ...prev,
         ...user_card
@@ -111,7 +128,7 @@ function EditCard() {
         // });
         // console.log("response", response)
     }
-  });
+  }, [user_card, user]);
 
   const FormSteps = [
     {
@@ -199,6 +216,8 @@ function EditCard() {
     console.log("formData", formData)
   };
 
+  const fileUploads = ["profile_photo_url", "company_logo_url", "cover_image_url"];
+
   // Handle file uploads
   const handleFileUpload = (e, field) => {
     const file = e.target.files[0];
@@ -212,22 +231,32 @@ function EditCard() {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     e.stopPropagation();
 
     console.log('Form data to submit:', formData);
     
-    if (true) {
+    if (!user_card) {
       console.log('Form data to submit 2:', formData);
-      const response = saveData({
+      const response = await saveData({
             ...formData,
             phone_number: phoneNumber,
         });
-        console.log("response", response)
-      // Here you would typically send data to your backend API
-      alert('Profile saved successfully!');
+        console.log("response", response.data)
+        gatherUserCardData(response.data);
     }
+    else if(user_card) {
+        console.log('Form data to submit 3:', formData);
+        const response = await saveData(phoneNumber,{
+            ...formData,
+            phone_number: phoneNumber,
+        });
+        console.log("response", response.data)
+        gatherUserCardData(response.data);
+    }
+
+    nextStep();
   };
 
   const [socialLinks, setSocialLinks] = useState([
@@ -762,8 +791,9 @@ function EditCard() {
             <div className='flex items-center bg-white py-2 rounded-t-lg inset-shadow-sm w-full sticky z-50 bottom-0 justify-between'>
                 <button onClick={prevStep} disabled={currentStep == 1} className="w-full m-1 rounded-lg text-white bg-black disabled:bg-secondary py-2 px-1">Précédent</button>
                 {
-                    (currentStep > 5
-                        ? <button onClick={nextStep} disabled={currentStep == 6} className="w-full m-1 flex items-center justify-center rounded-lg text-white bg-primary py-2 px-1">{currentStep == 5 ? <><Save size={20} className="me-1"/>Enregistrer</> :  "Suivant"}</button>
+                    (currentStep < 5
+                        ? <button onClick={nextStep} disabled={currentStep == 6 || loadingSave} className="w-full m-1 flex items-center justify-center rounded-lg text-white bg-primary py-2 px-1">{currentStep == 5 ? <>
+                        { loadingSave ? <Loader2 size={20} className="me-1"/> : <Save size={20} className="me-1"/> } Enregistrer</> :  "Suivant"}</button>
                         : <button onClick={handleSubmit} type={currentStep == 5 ? "submit" : "button"} disabled={currentStep == 6} className="w-full m-1 flex items-center justify-center rounded-lg text-white bg-primary py-2 px-1">{currentStep == 5 ? <><Save size={20} className="me-1"/>Enregistrer</> :  "Suivant"}</button>
                     )
                 }
