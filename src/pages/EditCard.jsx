@@ -110,7 +110,9 @@ function EditCard() {
   }
 
   const { execute: saveData, loadingSave, errorSave} = useApi(userCreateUpdateService);
-  const { execute: saveData, loadingSave, errorSave} = useApi(userService.upload_cover_imagex);
+  const { execute: uploadCover, loadingCover, errorCover} = useApi(userService.upload_cover_image);
+  const { execute: uploadLogo, loadingLogo, errorLogo} = useApi(userService.upload_company_logo);
+  const { execute: uploadProfile, loadingProfile, errorProfile} = useApi(userService.upload_profile_photo);
 
 
   useEffect(() => {
@@ -245,6 +247,7 @@ function EditCard() {
             phone_number: phoneNumber,
         });
         console.log("response", response.data)
+        if(error != false)
         gatherUserCardData(response.data);
     }
     else if(user_card) {
