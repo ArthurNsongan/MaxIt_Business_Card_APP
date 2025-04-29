@@ -78,7 +78,7 @@ export default function Home() {
           </form>)
           :
           (
-            <Link href='/edit' type="button" className='bg-primary rounded-xl h-[56px] flex items-center justify-between text-white text-center'>
+            <Link to='/edit' type="button" className='bg-primary rounded-xl h-[56px] flex items-center justify-between text-white text-center'>
               <span>&nbsp;</span>
               <span className='text-bold mx-4 px-12 tracking-wider'>Commencer</span> 
               <ArrowRight size={30} className='mr-4'/>

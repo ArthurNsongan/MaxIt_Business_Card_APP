@@ -110,6 +110,7 @@ function EditCard() {
   }
 
   const { execute: saveData, loadingSave, errorSave} = useApi(userCreateUpdateService);
+  const { execute: saveData, loadingSave, errorSave} = useApi(userService.upload_cover_imagex);
 
 
   useEffect(() => {
@@ -307,6 +308,33 @@ function EditCard() {
   const removeSocial = (index) => {
     setSocialLinks(socialLinks.filter((_, i) => i !== index));
   };
+
+  useEffect(() => {
+    var socialLinksTemp = [];
+    var linksTemp = {}
+    if(user_card?.linkedin_url?.length > 0) {
+        socialLinksTemp.push({ platform: "linkedin", username: user_card.linkedin_url })
+    } else if(user_card?.linkedin_url == null) {
+        linksTemp.linkedin_url = "";
+    }
+    if(user_card?.facebook_url?.length > 0) {
+        socialLinksTemp.push({ platform: "facebook", username: user_card.facebook_url })
+    } else if(user_card?.facebook_url == null) {
+        linksTemp.facebook_url = "";
+    }
+    if(user_card?.twitter_url?.length > 0) {
+        socialLinksTemp.push({ platform: "twitter", username: user_card.twitter_url })
+    } else if(user_card?.twitter_url == null) {
+        linksTemp.twitter_url = "";
+    }
+    if(user_card?.instagram_url?.length > 0) {
+        socialLinksTemp.push({ platform: "instagram", username: user_card.instagram_url })
+    } else if(user_card?.instagram_url == null) {
+        linksTemp.instagram_url = "";
+    }
+    console.log("socialLinksTemp", socialLinksTemp)
+    setSocialLinks([...socialLinksTemp])
+  }, []);
 
 
   return (
@@ -568,10 +596,10 @@ function EditCard() {
                                         className="block w-full p-2 pr-8 border border-gray-300 rounded appearance-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
                                     >
                                         <option>Sélectionner le réseau</option>
-                                        {formData.facebook_url?.length == 0 ? <option value="facebook">Facebook</option> : <></>}
-                                        {formData.twitter_url?.length == 0 ? <option value="twitter">Twitter</option> : <></>}
-                                        {formData.instagram_url?.length == 0 ? <option value="instagram">Instagram</option> : <></>}
-                                        {formData.linkedin_url?.length == 0 ? <option value="linkedin">LinkedIn</option> : <></>}
+                                        {(formData.facebook_url?.length == 0 || formData.facebook_url == null) ? <option value="facebook">Facebook</option> : <></>}
+                                        {(formData.twitter_url?.length == 0 || formData.twitter_url == null) ? <option value="twitter">Twitter</option> : <></>}
+                                        {(formData.instagram_url?.length == 0 || formData.instagram_url == null) ? <option value="instagram">Instagram</option> : <></>}
+                                        {(formData.linkedin_url?.length == 0 || formData.linkedin_url == null) ? <option value="linkedin">LinkedIn</option> : <></>}
                                         {/* {formData.linked_url?.length > 0 ? <option value="youtube">YouTube</option> : <></>} */}
                                     </select>
                                     <input
