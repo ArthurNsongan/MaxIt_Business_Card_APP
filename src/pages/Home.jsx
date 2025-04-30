@@ -1,9 +1,22 @@
 import { ArrowRight } from 'lucide-react'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useUser } from '../contexts/user_context';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAppBar } from '../contexts/appbar_context';
 
 export default function Home() {
+
+  const { setTitle, setShowBackButton, setActions } = useAppBar();
+
+  const [initHome, setInitHome] = useState({
+    phoneNmber: false,
+    user: false,
+    user_card: false
+  });
+  
+  useEffect(() => { 
+    setShowBackButton(false);
+  }, [setTitle, setShowBackButton, setActions]);
 
   const navigate = useNavigate();
   // const location = useLocation();
@@ -22,7 +35,6 @@ export default function Home() {
       return;
     }
 
-
     try {
       login({
         phoneNumber,
@@ -37,6 +49,11 @@ export default function Home() {
   };
 
   return (
+    initHome.user_card == false ?
+    <>
+    
+    </>
+    :
     <>
       <div className="w-full min-h-[calc(100dvh-60px)] flex flex-col items-center justify-center">
         <h1 className='text-3xl text-black text-center font-bold mb-12'>Bienvenue sur <br/>

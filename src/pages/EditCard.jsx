@@ -14,6 +14,7 @@ import EditPreviewCard from './EditPreviewCard';
 import { useUser } from '../contexts/user_context';
 import useApi from '../hooks/useApi';
 import userService from '../services/user_service';
+import LoadingPage from '../components/loading_page';
 
 export const formatSocialMedia = (p) => {
     switch(p) {
@@ -32,6 +33,8 @@ function goToTop() {
 function EditCard() {
 
   const { setTitle, setShowBackButton, setActions } = useAppBar();
+
+  const [loadingSaveData, setLoadingSaveData] = useState(false);
 
   const [formData, setFormData] = useState({
     phone_number: '',
@@ -250,6 +253,8 @@ function EditCard() {
     e.stopPropagation();
 
     console.log('Form data to submit:', formData);
+
+    await setLoadingSaveData(true);
     
     await saveImages();
     
@@ -260,6 +265,7 @@ function EditCard() {
             phone_number: phoneNumber,
         });
         console.log("response", response.data)
+        setLoadingSaveData(false);
         if(errorSave != false)
             gatherUserCardData(response.data);
     }
@@ -269,7 +275,8 @@ function EditCard() {
             ...formData,
             phone_number: phoneNumber,
         });
-        console.log("response", response.data)
+        console.log("response", response.data);
+        setLoadingSaveData(false);
         if(errorSave != false)
             gatherUserCardData(response.data);
     }
@@ -309,7 +316,7 @@ function EditCard() {
     if(file) {
         let formData = new FormData();
         formData.append("file", file);
-        let response = await uploadCover(phoneNumber, formData);
+        let response = await uploadLogo(phoneNumber, formData);
         console.log("cover_image_url", response.data);
     }
 
@@ -395,6 +402,11 @@ function EditCard() {
 
   return (
     <>
+        {
+            (
+                <LoadingPage loading={loadingSaveData} />
+            )
+        }
         {
             currentStep == 6 ?
             (
@@ -877,8 +889,8 @@ function EditCard() {
                 {
                     (currentStep < 5
                         ? <button onClick={nextStep} disabled={currentStep == 6 || loadingSave} className="w-full m-1 flex items-center justify-center rounded-lg text-white bg-primary py-2 px-1">{currentStep == 5 ? <>
-                        { loadingSave ? <Loader2 size={20} className="me-1"/> : <Save size={20} className="me-1"/> } Enregistrer</> :  "Suivant"}</button>
-                        : <button onClick={handleSubmit} type={currentStep == 5 ? "submit" : "button"} disabled={currentStep == 6} className="w-full m-1 flex items-center justify-center rounded-lg text-white bg-primary py-2 px-1">{currentStep == 5 ? <><Save size={20} className="me-1"/>Enregistrer</> :  "Suivant"}</button>
+                        { loadingSaveData ? <Loader2 size={20} className="me-1"/> : <Save size={20} className="me-1"/> } Enregistrer</> :  "Suivant"}</button>
+                        : <button onClick={() => {}} type={currentStep == 5 ? "submit" : "button"} disabled={currentStep == 6} className="w-full m-1 flex items-center justify-center rounded-lg text-white bg-primary py-2 px-1">{currentStep == 5 ? <><Save size={20} className="me-1"/>Enregistrer</> :  "Suivant"}</button>
                     )
                 }
             </div>
