@@ -221,13 +221,24 @@ function EditCard() {
 
   const fileUploads = ["profile_photo_url", "company_logo_url", "cover_image_url"];
 
+  const [files, setFiles] = useState({
+    profile_photo_url: null,
+    company_logo_url: null,
+    cover_image_url: null
+  });
+
+
   // Handle file uploads
   const handleFileUpload = (e, field) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (event) => {
-        setFormData(prev => ({ ...prev, [field]: event.target.result }));
+      reader.onload = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        setFiles(prev => ({ ...prev, [field]: file }));
+        setFormData(prev => ({ ...prev, [field]: e.target.result }));
       };
       reader.readAsDataURL(file);
     }
@@ -240,6 +251,8 @@ function EditCard() {
 
     console.log('Form data to submit:', formData);
     
+    await saveImages();
+    
     if (!user_card) {
       console.log('Form data to submit 2:', formData);
       const response = await saveData({
@@ -247,8 +260,8 @@ function EditCard() {
             phone_number: phoneNumber,
         });
         console.log("response", response.data)
-        if(error != false)
-        gatherUserCardData(response.data);
+        if(errorSave != false)
+            gatherUserCardData(response.data);
     }
     else if(user_card) {
         console.log('Form data to submit 3:', formData);
@@ -257,11 +270,51 @@ function EditCard() {
             phone_number: phoneNumber,
         });
         console.log("response", response.data)
-        gatherUserCardData(response.data);
+        if(errorSave != false)
+            gatherUserCardData(response.data);
     }
 
     nextStep();
   };
+
+  const saveImages = async () => {
+
+    console.log(files)
+
+    var file = null;
+    file = files?.profile_photo_url;
+    if (!file) return alert("No file selected");
+
+    if(file) {
+        let formData = new FormData();
+        formData.append("file", file);
+        let response = await uploadProfile(phoneNumber, formData);
+        console.log("profile_photo_url", response.data);
+    }
+
+    file = files?.cover_image_url;
+    if (!file) return alert("No file selected");
+
+    if(file) {
+        let formData = new FormData();
+        formData.append("file", file);
+        let response = await uploadCover(phoneNumber, formData);
+        console.log("company_logo_url", response.data);
+    }
+
+
+    file = files?.company_logo_url;
+    if (!file) return alert("No file selected");
+
+    if(file) {
+        let formData = new FormData();
+        formData.append("file", file);
+        let response = await uploadCover(phoneNumber, formData);
+        console.log("cover_image_url", response.data);
+    }
+
+
+  }
 
   const [socialLinks, setSocialLinks] = useState([
 

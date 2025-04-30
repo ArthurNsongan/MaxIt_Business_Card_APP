@@ -2,9 +2,9 @@ import apiClient from "./client";
 
 const PATHS = {
     CREATE: '/users/',
-    UPLOAD_PROFILE_PHOTO: '/upload/profile',
-    UPLOAD_COMPANY_LOGO: '/upload/logo',
-    UPLOAD_COVER_IMAGE: '/upload/cover',
+    UPLOAD_PROFILE_PHOTO: '/users/{phoneNumber}/upload/profile',
+    UPLOAD_COMPANY_LOGO: '/users/{phoneNumber}/upload/logo',
+    UPLOAD_COVER_IMAGE: '/users/{phoneNumber}/upload/cover',
   };
   
   // Auth services
@@ -21,16 +21,28 @@ const PATHS = {
         const response = await apiClient.put(PATHS.CREATE + phoneNumber, user_card);
         return response.data;
     },
-    upload_profile_photo: async (phoneNumber) => {
-      const response = await apiClient.post(phoneNumber + PATHS.UPLOAD_PROFILE_PHOTO, {});
+    upload_profile_photo: async (phoneNumber, formData) => {
+      const response = await apiClient.post(PATHS.UPLOAD_PROFILE_PHOTO.replace("{phoneNumber}",phoneNumber), formData, {
+        headers: {
+            "Content-Type": "multipart/form-data",
+        }
+      });
       return response.data;
     },
-    upload_company_logo: async (phoneNumber) => {
-        const response = await apiClient.post(phoneNumber + PATHS.UPLOAD_COMPANY_LOGO, {});
+    upload_company_logo: async (phoneNumber,formData) => {
+        const response = await apiClient.post(PATHS.UPLOAD_COMPANY_LOGO.replace("{phoneNumber}",phoneNumber), formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            }
+        });
         return response.data;
     },
-    upload_cover_image: async (phoneNumber) => {
-        const response = await apiClient.post(phoneNumber + PATHS.UPLOAD_COVER_IMAGE, {});
+    upload_cover_image: async (phoneNumber,formData) => {
+        const response = await apiClient.post(PATHS.UPLOAD_COVER_IMAGE.replace("{phoneNumber}",phoneNumber), formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            }
+        });
         return response.data;
     }
   };
