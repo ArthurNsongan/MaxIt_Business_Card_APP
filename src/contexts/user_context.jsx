@@ -35,8 +35,17 @@ const formatPhoneNumber = (phoneNumber) => {
 export function UserContextProvider({ children }) {
   const [user, setUser] = useState(null);
   const [user_card, setUserCard] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState({
+    checked: null,
+    authenticated: null,
+    hasSubscription: null
+  });
   
+  useEffect(() => {
+    console.log("Loading State App", loading)
+  }, [loading])
+  
+
   // Check localStorage on initial render
   useEffect(() => {
     const storedUser = localStorage.getItem(USER_STORAGE_KEY);
@@ -50,13 +59,14 @@ export function UserContextProvider({ children }) {
         }
         // Validate the phone number format
         setUser(storedUserObj);
-        console.log("storedUser", storedUserObj)
+        console.log("storedUser", storedUserObj);
+        setLoading({...loading, authenticated: true});
       } catch (error) {
         console.error('Failed to parse user data from localStorage:', error);
         localStorage.removeItem(USER_STORAGE_KEY);
+        setLoading({...loading, authenticated: false});
       }
     }
-    setLoading(false);
   }, []);
 
   useEffect(() => {
@@ -72,9 +82,11 @@ export function UserContextProvider({ children }) {
         if(data != null) {
           console.log(")data)", data)
           setUserCard(data);
+          setLoading({...loading, checked: true})
         }
-        else {
+        else if(error){
           console.log(")error)", error)
+          setLoading({...loading, checked: false})
         }
       }
     }
@@ -123,7 +135,8 @@ export function UserContextProvider({ children }) {
     isAuthenticated: !!user,
     loading,
     validatePhoneNumber: isCameroonPhoneNumber,
-    setUserCard
+    setUserCard,
+    setLoading
   };
   
   return (

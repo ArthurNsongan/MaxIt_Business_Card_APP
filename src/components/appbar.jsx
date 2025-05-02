@@ -5,11 +5,11 @@ import { ArrowLeft } from 'lucide-react';
 
 export default function AppBar() {
 
-  const { showBackButton } = useAppBar();
+  const { showBackButton, visible } = useAppBar();
   const navigate = useNavigate();
 
   return (
-    <div className='w-full bg-black sticky top-0 z-[30] rounded-b-2xl backdrop-blur-lg h-[60px] flex items-center justify-start'>
+    <div className={`w-full bg-black sticky top-0 z-[30] rounded-b-2xl backdrop-blur-lg ${visible ? "h-[60px]" : ""} flex items-center justify-start`}>
       {showBackButton && (
         <button 
           onClick={() => navigate(-1)}

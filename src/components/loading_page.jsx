@@ -49,7 +49,7 @@ export default function LoadingPage() {
   }, []);
 
   return (
-    <div className="flex z-[5000] top-0 sticky flex-col justify-center items-center w-screen max-h-[100dvh] bg-white p-4">
+    <div className="flex z-[5000] top-0 fixed flex-col justify-center items-center w-screen min-h-[100dvh] bg-white p-4">
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">

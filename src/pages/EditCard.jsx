@@ -402,11 +402,11 @@ function EditCard() {
 
   return (
     <>
-        {
+        {/* {
             (
                 <LoadingPage loading={loadingSaveData} />
             )
-        }
+        } */}
         {
             currentStep == 6 ?
             (
@@ -890,7 +890,7 @@ function EditCard() {
                     (currentStep < 5
                         ? <button onClick={nextStep} disabled={currentStep == 6 || loadingSave} className="w-full m-1 flex items-center justify-center rounded-lg text-white bg-primary py-2 px-1">{currentStep == 5 ? <>
                         { loadingSaveData ? <Loader2 size={20} className="me-1"/> : <Save size={20} className="me-1"/> } Enregistrer</> :  "Suivant"}</button>
-                        : <button onClick={() => {}} type={currentStep == 5 ? "submit" : "button"} disabled={currentStep == 6} className="w-full m-1 flex items-center justify-center rounded-lg text-white bg-primary py-2 px-1">{currentStep == 5 ? <><Save size={20} className="me-1"/>Enregistrer</> :  "Suivant"}</button>
+                        : <button onClick={handleSubmit} type={currentStep == 5 ? "submit" : "button"} disabled={currentStep == 6} className="w-full m-1 flex items-center justify-center rounded-lg text-white bg-primary py-2 px-1">{currentStep == 5 ? <><Save size={20} className="me-1"/>Enregistrer</> :  "Suivant"}</button>
                     )
                 }
             </div>

@@ -1,18 +1,13 @@
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Globe, Linkedin, Loader, Mail, MapPin, Phone } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { useUser } from '../contexts/user_context';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppBar } from '../contexts/appbar_context';
+import HomeCardPage from './home_pages/home_card_page';
 
 export default function Home() {
 
   const { setTitle, setShowBackButton, setActions } = useAppBar();
-
-  const [initHome, setInitHome] = useState({
-    phoneNmber: false,
-    user: false,
-    user_card: false
-  });
   
   useEffect(() => { 
     setShowBackButton(false);
@@ -24,8 +19,8 @@ export default function Home() {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [Error, setError] = useState('');
 
-  const { user, login, validatePhoneNumber } = useUser();
-  
+  const { user, login, validatePhoneNumber, loading } = useUser();
+
   const handlePhoneSubmit = (e) => {
     e.preventDefault();
     setError('');
@@ -49,10 +44,12 @@ export default function Home() {
   };
 
   return (
-    initHome.user_card == false ?
-    <>
-    
-    </>
+    (loading.checked == null && loading.authenticated == null && loading.hasSubscription == null) ? 
+      <div className="w-full min-h-[calc(100dvh-60px)] flex flex-col items-center justify-center">
+        <Loader className="text-primary" size={120}></Loader>
+      </div>
+    : (loading.authenticated == true && loading.checked == true && loading.hasSubscription == null) ?
+      <HomeCardPage/>
     :
     <>
       <div className="w-full min-h-[calc(100dvh-60px)] flex flex-col items-center justify-center">
