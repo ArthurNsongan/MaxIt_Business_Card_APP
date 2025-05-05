@@ -25,7 +25,8 @@ const formatPhoneNumber = (phoneNumber) => {
   
   // If it doesn't start with country code, add it
   if (!digits.startsWith('237')) {
-    return `237${digits}`;
+    // return `237${digits}`;
+    return `${digits}`;
   }
   
   return digits;
@@ -66,6 +67,8 @@ export function UserContextProvider({ children }) {
         localStorage.removeItem(USER_STORAGE_KEY);
         setLoading({...loading, authenticated: false});
       }
+    } else {
+      setLoading({...loading, authenticated: false})
     }
   }, []);
 

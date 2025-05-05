@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useAppBar } from '../contexts/appbar_context';
 import { useRef } from 'react';
-import { Eye, Image, ImageIcon, Landmark, Loader2, Mail, MailIcon, MapPin, PhoneCallIcon, Plus, Save, User, X } from 'lucide-react';
+import { Eye, Image, ImageIcon, Landmark, Loader, Loader2, Mail, MailIcon, MapPin, PhoneCallIcon, Plus, Save, User, X } from 'lucide-react';
 import { 
     Facebook, 
     Twitter, 
@@ -32,7 +32,7 @@ function goToTop() {
 
 function EditCard() {
 
-  const { setTitle, setShowBackButton, setActions } = useAppBar();
+  const { setTitle, setShowBackButton, setActions, setVisible } = useAppBar();
 
   const [loadingSaveData, setLoadingSaveData] = useState(false);
 
@@ -52,7 +52,7 @@ function EditCard() {
     twitter_url: '',
     instagram_url: '',
     facebook_url: '',
-    other_socials: '',
+    other_socials: {},
     profile_photo_url: '',
     company_logo_url: '',
     cover_image_url: '',
@@ -91,17 +91,26 @@ function EditCard() {
   const gatherUserCardData = async (user_card_datas) => {
     await setUserCard(user_card_datas);
  }
+ 
+ const [currentStep, setCurrentStep] = useState(1);
+ const [cardType, setCardType] = useState("basic")
+
+useEffect(() => {
+    console.log("currentStep :", currentStep)
+
+}, [currentStep])
 
 
   useEffect(() => {
     setTitle('EditCard');
     setShowBackButton(true);
+    setVisible(true);
     console.log("phoneNumber", phoneNumber)
     setFormData(prev => ({ ...prev, phone_number: phoneNumber }));
     return () => {
       setActions(null);
     };
-  }, [setTitle, setShowBackButton, setActions]);
+  }, [setTitle, setShowBackButton, setActions, setVisible]);
 
   let userCreateUpdateService = null
 
@@ -164,8 +173,6 @@ function EditCard() {
     }
   ]
 
-  const [currentStep, setCurrentStep] = useState(1);
-  const [cardType, setCardType] = useState("basic")
 
   const getStepLabel = (step) => {
     return FormSteps.find(t => t.id == step);
@@ -174,11 +181,14 @@ function EditCard() {
   const nextStep = () => {
     // Validate the current step before proceeding
     if(validateStep(currentStep)) {
-        if(currentStep < 6) {
+        if(currentStep) {
             setCurrentStep(currentStep + 1)
         }
         goToTop();
     }
+
+    console.log(currentStep, "is step");
+    
   }
 
   const prevStep = () => {
@@ -247,19 +257,22 @@ function EditCard() {
     }
   };
 
+  const [saveRequestStep, setsaveRequestStep] = useState(0);
+
   // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+    e?.preventDefault();
+    e?.stopPropagation();
 
     console.log('Form data to submit:', formData);
+    
+    nextStep();
 
     await setLoadingSaveData(true);
-    
-    await saveImages();
-    
+
     if (!user_card) {
       console.log('Form data to submit 2:', formData);
+      setsaveRequestStep("SAVE_DATA");
       const response = await saveData({
             ...formData,
             phone_number: phoneNumber,
@@ -271,6 +284,7 @@ function EditCard() {
     }
     else if(user_card) {
         console.log('Form data to submit 3:', formData);
+        setsaveRequestStep("SAVE_DATA");
         const response = await saveData(phoneNumber,{
             ...formData,
             phone_number: phoneNumber,
@@ -281,7 +295,10 @@ function EditCard() {
             gatherUserCardData(response.data);
     }
 
-    nextStep();
+        
+    await saveImages();
+
+    setCurrentStep(7)
   };
 
   const saveImages = async () => {
@@ -290,9 +307,10 @@ function EditCard() {
 
     var file = null;
     file = files?.profile_photo_url;
-    if (!file) return alert("No file selected");
+    // if (!file) return alert("No file selected");
 
     if(file) {
+        setsaveRequestStep("PROFILE_PHOTO");
         let formData = new FormData();
         formData.append("file", file);
         let response = await uploadProfile(phoneNumber, formData);
@@ -300,9 +318,10 @@ function EditCard() {
     }
 
     file = files?.cover_image_url;
-    if (!file) return alert("No file selected");
+    // if (!file) return alert("No file selected");
 
     if(file) {
+        setsaveRequestStep("COMPANY_LOGO");
         let formData = new FormData();
         formData.append("file", file);
         let response = await uploadCover(phoneNumber, formData);
@@ -311,9 +330,10 @@ function EditCard() {
 
 
     file = files?.company_logo_url;
-    if (!file) return alert("No file selected");
+    // if (!file) return alert("No file selected");
 
     if(file) {
+        setsaveRequestStep("COVER_IMAGE");
         let formData = new FormData();
         formData.append("file", file);
         let response = await uploadLogo(phoneNumber, formData);
@@ -408,12 +428,33 @@ function EditCard() {
             )
         } */}
         {
-            currentStep == 6 ?
+            currentStep == 7 ?
             (
                 <>
                     <EditPreviewCard card_type={cardType} preview_data={formData}/>
                     <button className='bg-red-500 h-12 w-full rounded' onClick={() => { setCurrentStep(currentStep-1) }}>Prev</button>
                 </> 
+            ) 
+            : currentStep == 6 ? 
+            (
+                <div className="w-full min-h-[calc(100dvh-60px)] flex flex-col items-center justify-between">
+                    <span></span>
+                    <div className='flex items-center flex-col'>
+                        <Loader className="animate-spin duration-2000 text-primary" size={80}></Loader>
+                        {
+                            saveRequestStep == "COMPANY_LOGO" ?
+                            <p className='text-center text-sm font-bold mt-2'>Enregistrement de votre logo d'entreprise</p> :
+                            saveRequestStep == "COVER_IMAGE" ?
+                            <p className='text-center text-sm font-bold mt-2'>Enregistrement de votre image de couverture</p> :
+                            saveRequestStep == "PROFILE_PHOTO" ?
+                            <p className='text-center text-sm font-bold mt-2'>Enregistrement de votre photo de profil</p> :
+                            saveRequestStep == "SAVE_DATA" ?
+                            <p className='text-center text-sm font-bold mt-2'>Enregistrement de vos données personnelles</p> :
+                            <></>
+                        }
+                    </div>
+                    <span></span>
+                </div>
             )
             :
             (
@@ -884,16 +925,21 @@ function EditCard() {
 
 
             </form>
-            <div className='flex items-center bg-white py-2 rounded-t-lg inset-shadow-sm w-full sticky z-50 bottom-0 justify-between'>
-                <button onClick={prevStep} disabled={currentStep == 1} className="w-full m-1 rounded-lg text-white bg-black disabled:bg-secondary py-2 px-1">Précédent</button>
-                {
-                    (currentStep < 5
-                        ? <button onClick={nextStep} disabled={currentStep == 6 || loadingSave} className="w-full m-1 flex items-center justify-center rounded-lg text-white bg-primary py-2 px-1">{currentStep == 5 ? <>
-                        { loadingSaveData ? <Loader2 size={20} className="me-1"/> : <Save size={20} className="me-1"/> } Enregistrer</> :  "Suivant"}</button>
-                        : <button onClick={handleSubmit} type={currentStep == 5 ? "submit" : "button"} disabled={currentStep == 6} className="w-full m-1 flex items-center justify-center rounded-lg text-white bg-primary py-2 px-1">{currentStep == 5 ? <><Save size={20} className="me-1"/>Enregistrer</> :  "Suivant"}</button>
-                    )
-                }
-            </div>
+            {
+                currentStep != 6 ? 
+                <div className='flex items-center bg-white py-2 rounded-t-lg inset-shadow-sm w-full sticky z-50 bottom-0 justify-between'>
+                    <button onClick={prevStep} disabled={currentStep == 1} className="w-full m-1 rounded-lg text-white bg-black disabled:bg-secondary py-2 px-1">Précédent</button>
+                    {
+                        (
+                            <button onClick={currentStep == 5 ? handleSubmit : nextStep}
+                                className="w-full m-1 flex items-center justify-center 
+                                rounded-lg text-white bg-primary py-2 px-1">
+                                { currentStep == 6 ? <Loader2 size={20} className="animate-spin"/> : <Save size={20} className=""/> } Suivant</button>
+                        )
+                    }
+                </div>
+                : <></>
+            }
         </div>
             )
         }

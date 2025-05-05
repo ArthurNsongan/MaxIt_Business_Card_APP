@@ -3,6 +3,7 @@ import { useUser } from '../../contexts/user_context'
 import { toPng } from 'html-to-image';
 import { QRCode} from 'react-qrcode-logo'
 import { Link } from 'react-router-dom';
+import { Globe } from 'lucide-react';
 
 function HomeCardPage() {
 

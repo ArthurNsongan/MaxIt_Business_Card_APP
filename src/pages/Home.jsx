@@ -7,11 +7,12 @@ import HomeCardPage from './home_pages/home_card_page';
 
 export default function Home() {
 
-  const { setTitle, setShowBackButton, setActions } = useAppBar();
+  const { setTitle, setShowBackButton, setActions, setVisible } = useAppBar();
   
   useEffect(() => { 
     setShowBackButton(false);
-  }, [setTitle, setShowBackButton, setActions]);
+    setVisible(false);
+  }, [setTitle, setShowBackButton, setActions, setVisible]);
 
   const navigate = useNavigate();
   // const location = useLocation();
@@ -20,6 +21,10 @@ export default function Home() {
   const [Error, setError] = useState('');
 
   const { user, login, validatePhoneNumber, loading } = useUser();
+
+  useEffect(() => {
+    console.log("user", loading)
+  }, [loading]);
 
   const handlePhoneSubmit = (e) => {
     e.preventDefault();
@@ -46,7 +51,7 @@ export default function Home() {
   return (
     (loading.checked == null && loading.authenticated == null && loading.hasSubscription == null) ? 
       <div className="w-full min-h-[calc(100dvh-60px)] flex flex-col items-center justify-center">
-        <Loader className="text-primary" size={120}></Loader>
+        <Loader className="animate-spin duration-2000 text-primary" size={120}></Loader>
       </div>
     : (loading.authenticated == true && loading.checked == true && loading.hasSubscription == null) ?
       <HomeCardPage/>
