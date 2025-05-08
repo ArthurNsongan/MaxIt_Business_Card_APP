@@ -279,10 +279,15 @@ useEffect(() => {
         });
         console.log("response", response.data)
         setLoadingSaveData(false);
-        if(errorSave != false)
+        // if(errorSave != false)
             gatherUserCardData(response.data);
+        
+        await saveImages();
     }
     else if(user_card) {
+
+        await saveImages();
+
         console.log('Form data to submit 3:', formData);
         setsaveRequestStep("SAVE_DATA");
         const response = await saveData(phoneNumber,{
@@ -291,12 +296,10 @@ useEffect(() => {
         });
         console.log("response", response.data);
         setLoadingSaveData(false);
-        if(errorSave != false)
+        // if(errorSave != false)
             gatherUserCardData(response.data);
     }
-
-        
-    await saveImages();
+      
 
     setCurrentStep(7)
   };
@@ -315,6 +318,7 @@ useEffect(() => {
         formData.append("file", file);
         let response = await uploadProfile(phoneNumber, formData);
         console.log("profile_photo_url", response.data);
+        gatherUserCardData(response.data)
     }
 
     file = files?.cover_image_url;
@@ -326,6 +330,7 @@ useEffect(() => {
         formData.append("file", file);
         let response = await uploadCover(phoneNumber, formData);
         console.log("company_logo_url", response.data);
+        gatherUserCardData(response.data)
     }
 
 
@@ -338,6 +343,7 @@ useEffect(() => {
         formData.append("file", file);
         let response = await uploadLogo(phoneNumber, formData);
         console.log("cover_image_url", response.data);
+        gatherUserCardData(response.data)
     }
 
 
@@ -432,7 +438,6 @@ useEffect(() => {
             (
                 <>
                     <EditPreviewCard card_type={cardType} preview_data={formData}/>
-                    <button className='bg-red-500 h-12 w-full rounded' onClick={() => { setCurrentStep(currentStep-1) }}>Prev</button>
                 </> 
             ) 
             : currentStep == 6 ? 

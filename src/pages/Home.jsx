@@ -4,6 +4,7 @@ import { useUser } from '../contexts/user_context';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppBar } from '../contexts/appbar_context';
 import HomeCardPage from './home_pages/home_card_page';
+import HomeQRPage from './home_pages/home_qr_page';
 
 export default function Home() {
 
@@ -54,7 +55,7 @@ export default function Home() {
         <Loader className="animate-spin duration-2000 text-primary" size={120}></Loader>
       </div>
     : (loading.authenticated == true && loading.checked == true && loading.hasSubscription == null) ?
-      <HomeCardPage/>
+      <HomeQRPage/>
     :
     <>
       <div className="w-full min-h-[calc(100dvh-60px)] flex flex-col items-center justify-center">

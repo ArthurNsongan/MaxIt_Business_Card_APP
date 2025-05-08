@@ -155,9 +155,9 @@ function HomeCardPage() {
                       enableCORS="true"
                       qrStyle="dots"
                       eyeRadius={16}
-                    //   removeQrCodeBehindLogo={true}
+                      removeQrCodeBehindLogo={true}
                       logoPadding={2}
-                    //   logoPaddingStyle="circle"
+                      logoPaddingStyle="circle"
                       ecLevel="H"
                       dotsOptions={{
                         type: "rounded",
