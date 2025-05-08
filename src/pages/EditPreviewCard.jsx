@@ -8,7 +8,7 @@ import FormattedText from '../components/formatter';
 function EditPreviewCard({preview_data, card_type = null}) {
 
   const { setVisible } = useAppBar();
-  const { user, user_card } = useUser();
+  const { user_card } = useUser();
 
   useEffect(() => {
     setVisible(false)

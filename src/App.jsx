@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react'
 import { pageInAnimation } from './utils/animations';
 import { AppBarProvider } from './contexts/appbar_context'
 import { UserContextProvider } from './contexts/user_context'
+import Subscription from './pages/Subscription'
 
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
                   <Route path='/login' element={<Login />} />
                   <Route path='/' element={<Home />} />
                   <Route path='/edit' element={<EditCard />} />
+                  <Route path='/subscription-plans' element={<Subscription />} />
                 </Routes>
             </div>
           </AppBarProvider>          
