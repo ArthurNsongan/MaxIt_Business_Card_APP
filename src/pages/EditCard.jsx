@@ -232,7 +232,7 @@ useEffect(() => {
     console.log("formData", formData)
   };
 
-  const fileUploads = ["profile_photo_url", "company_logo_url", "cover_image_url"];
+//   const fileUploads = ["profile_photo_url", "company_logo_url", "cover_image_url"];
 
   const [files, setFiles] = useState({
     profile_photo_url: null,
@@ -352,6 +352,11 @@ useEffect(() => {
   const [socialLinks, setSocialLinks] = useState([
 
   ]);
+
+  useEffect(() => {
+    
+  }, [user_card])
+  
   
   const [isAdding, setIsAdding] = useState(false);
   const [newPlatform, setNewPlatform] = useState('');
@@ -423,7 +428,7 @@ useEffect(() => {
     }
     console.log("socialLinksTemp", socialLinksTemp)
     setSocialLinks([...socialLinksTemp])
-  }, []);
+  }, [user_card]);
 
 
   return (
@@ -758,7 +763,7 @@ useEffect(() => {
                     <div className="animate-fadeIn">
 
                         <div className="mb-6">
-                        <label className="block mb-3 font-medium">Profile Photo</label>
+                        <label className="block mb-3 font-medium">Photo de Profil</label>
                         <div className="flex items-center gap-4">
                             {formData.profile_photo_url ? (
                             <img 
@@ -785,14 +790,14 @@ useEffect(() => {
                             onClick={() => fileInputRef.current?.click()}
                             className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors"
                             >
-                            {formData.profile_photo_url ? 'Change Photo' : 'Upload Photo'}
+                            {formData.profile_photo_url ? 'Modifier votre photo de profil' : 'Charger votre photo de profil'}
                             </button>
                         </div>
                         </div>
 
                         {/* Company Logo Upload */}
                         <div className="mb-6">
-                        <label className="block mb-3 font-medium">Company Logo</label>
+                        <label className="block mb-3 font-medium">Logo de votre entreprise</label>
                         <div className="flex items-center gap-4">
                             {formData.company_logo_url ? (
                             <img 
@@ -819,19 +824,19 @@ useEffect(() => {
                             onClick={() => companyLogoRef.current?.click()}
                             className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors"
                             >
-                            {formData.company_logo_url ? 'Change Logo' : 'Upload Logo'}
+                            {formData.company_logo_url ? 'Modifier le logo' : 'Charger le logo'}
                             </button>
                         </div>
                         </div>
 
                             {/* Cover Image Upload */}
                             <div className="mb-6">
-                            <label className="block mb-3 font-medium">Cover Image</label>
+                            <label className="block mb-3 font-medium">Image de couverture</label>
                             <div className="flex flex-col gap-4">
                                 {formData.cover_image_url ? (
                                 <img 
                                     src={formData.cover_image_url} 
-                                    alt="Cover" 
+                                    alt="Image de couverture" 
                                     className="w-full h-32 object-cover rounded-lg border-2 border-gray-300"
                                 />
                                 ) : (
@@ -853,7 +858,7 @@ useEffect(() => {
                                 onClick={() => coverImageRef.current?.click()}
                                 className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors self-start"
                                 >
-                                {formData.cover_image_url ? 'Change Cover' : 'Upload Cover'}
+                                {formData.cover_image_url ? 'Modifier l\'image' : 'Charger l\'image'}
                                 </button>
                             </div>
                             </div>
@@ -866,7 +871,7 @@ useEffect(() => {
                     <div className="animate-fadeIn">
 
                         <div className="mb-6">
-                        <label className="block mb-3 font-medium">Background Color</label>
+                        <label className="block mb-3 font-medium">Couleur d'arrière-plan</label>
                         <div className="flex flex-wrap gap-3">
                             {colorOptions.map((color, colorIndex) => (
                             <button
@@ -887,7 +892,7 @@ useEffect(() => {
                         </div>
 
                         <div className="mb-6">
-                        <label className="block mb-3 font-medium">Text Color</label>
+                        <label className="block mb-3 font-medium">Couleur du texte</label>
                         <div className="flex flex-wrap gap-3">
                             {textColorOptions.map((color) => (
                             <button
@@ -908,7 +913,7 @@ useEffect(() => {
                         </div>
 
                         <div className="mb-6">
-                        <label htmlFor="font_family" className="block mb-2 font-medium">Font Family</label>
+                        <label htmlFor="font_family" className="block mb-2 font-medium">Sélectionnez la police de votre choix</label>
                         <select
                             id="font_family"
                             name="font_family"
