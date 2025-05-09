@@ -2,10 +2,10 @@ import React from 'react'
 import { useAppBar } from '../contexts/appbar_context'
 import { useEffect } from 'react';
 import { useUser } from '../contexts/user_context';
-import { Facebook, Globe2, InstagramIcon, LinkedinIcon, Locate, Mail, MapPin, Phone, Pin, Twitter, TwitterIcon, XIcon } from 'lucide-react';
+import { ArrowLeft, Facebook, Globe2, InstagramIcon, LinkedinIcon, Locate, Mail, MapPin, Phone, Pin, Twitter, TwitterIcon, XIcon } from 'lucide-react';
 import FormattedText from '../components/formatter';
 
-function EditPreviewCard({preview_data, card_type = null}) {
+function EditPreviewCard({previous_action, card_type = null}) {
 
   const { setVisible } = useAppBar();
   const { user_card } = useUser();
@@ -15,9 +15,15 @@ function EditPreviewCard({preview_data, card_type = null}) {
   }, []);
 
   return (
-    card_type == null ? <EditPreviewPremiumCard preview_data={user_card} card_type={card_type}/> :
-    card_type == "basic" ? <EditPreviewPremiumCard preview_data={user_card} card_type={card_type} /> :
-    card_type == "premium" ? <EditPreviewPremiumCard preview_data={user_card} card_type={card_type} /> : <></>
+    <>
+    <button className='fixed z-[100] top-2 right-4 flex items-center 
+        justify-center h-12 w-12 rounded bg-black text-primary' onClick={previous_action}><ArrowLeft /></button>
+    {
+      card_type == null ? <EditPreviewBasicCard preview_data={user_card} card_type={card_type}/> :
+      card_type == "basic" ? <EditPreviewBasicCard preview_data={user_card} card_type={card_type} /> :
+      card_type == "premium" ? <EditPreviewPremiumCard preview_data={user_card} card_type={card_type} /> : <></>
+    }
+    </>
   );
 }
 
@@ -25,7 +31,7 @@ function EditPreviewCard({preview_data, card_type = null}) {
 function EditPreviewBasicCard({preview_data}) {
   return (
     <>
-      <div className="w-full relative translate-y-[-25px] min-h-[calc(100dvh-60px)] flex flex-col">
+      <div className="w-screen relative translate-y-[-25px] flex flex-col">
           <div className='bg-black -mb-16 relative tracking-wide text-white h-[180px] pl-[32px] pr-[32px] pb-[60px] pt-[60px] rounded-b-2xl'>
             
           </div>
@@ -153,9 +159,7 @@ function EditPreviewBasicCard({preview_data}) {
                 tabSpaces={2} className='text-[14px] leading-4.5' text={preview_data?.bio}></FormattedText> : <></>
               }
             </div>
-      </div>
-
-    </>
+      </div></>
   )
 }
 
@@ -165,7 +169,7 @@ function EditPreviewPremiumCard({preview_data}) {
       <div style={{
           color: preview_data?.text_color,
           backgroundColor: preview_data?.background_color
-        }} className={"w-full relative min-h-[calc(100dvh-60px)] flex flex-col"}>
+        }} className={"w-screen relative min-h-[100dvh] flex flex-col"}>
           <div className={`bg-black -mb-12 relative tracking-wide text-white h-[240px] 
             pl-[32px] pr-[32px] rounded-b-2xl`} 
             style={{ backgroundImage: "url('" + preview_data?.cover_image_url + "')", backgroundPosition: "center",
