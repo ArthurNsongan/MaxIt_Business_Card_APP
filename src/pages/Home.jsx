@@ -50,13 +50,17 @@ export default function Home() {
   };
 
   return (
-    (loading.checked == null && loading.authenticated == null && loading.hasSubscription == null) ? 
+    (((loading.checked == null && loading.authenticated == null) ||  
+      (loading.authenticated == true && loading.checked == null) ||
+    (loading.authenticated == false && loading.checked == null)) && loading.hasSubscription == null) ? 
       <div className="w-full min-h-[calc(100dvh-60px)] flex flex-col items-center justify-center">
         <Loader className="animate-spin duration-2000 text-primary" size={120}></Loader>
       </div>
-    : (loading.authenticated == true && loading.checked == true && loading.hasSubscription == null) ?
-      <HomeQRPage/>
-    :
+    : ((loading.authenticated == true && loading.checked == true) && loading.hasSubscription == null) ?
+      <HomeCardPage />
+    : ((loading.authenticated == false && loading.checked == false) ||
+      (loading.authenticated == false && loading.checked == true) ||
+      (loading.authenticated == true && loading.checked == false)) ?
     <>
       <div className="w-full min-h-[calc(100dvh-60px)] flex flex-col items-center justify-center">
         <h1 className='text-3xl text-black text-center font-bold mb-12'>Bienvenue sur <br/>
@@ -106,6 +110,6 @@ export default function Home() {
           )
         }
       </div>
-    </>
+    </> : <></>
   )
 }

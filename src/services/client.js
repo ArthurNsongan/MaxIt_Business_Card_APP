@@ -1,6 +1,8 @@
 // src/services/api/client.js - Base API client setup
 import axios from 'axios';
 
+export const apiAddress = import.meta.env.VITE_API_URL;
+
 // Create a base axios instance
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL,

@@ -4,6 +4,7 @@ import { toPng } from 'html-to-image';
 import { QRCode} from 'react-qrcode-logo'
 import { Link } from 'react-router-dom';
 import { Globe } from 'lucide-react';
+import { apiAddress } from '../../services/client';
 
 function HomeCardPage() {
 
@@ -123,8 +124,8 @@ function HomeCardPage() {
                     {
                       user_card?.website_url ?
                         <div className="flex items-center mt-1">
-                          <Globe size={14} className="mr-2" style={{ color: user_card.background_color }} />
-                          <span className='text-[10px] font-semibold'>{user_card?.website}</span>
+                          <Globe size={14} className="mr-2" />
+                          <span className='text-[10px] font-semibold'>{user_card?.website_url}</span>
                         </div> 
                       : <></>
                     }
@@ -134,7 +135,7 @@ function HomeCardPage() {
                     {
                       user_card?.company_logo_url ?
                         <div className="flex items-center mt-2">
-                          <img crossOrigin='anonymous' src={user_card?.company_logo_url} className='h-[70px] rounded' />
+                          <img crossOrigin='anonymous' src={apiAddress + user_card?.company_logo_url} className='h-[70px] rounded' />
                         </div>
                       : <></>
                     }
@@ -149,7 +150,7 @@ function HomeCardPage() {
                       quietZone={10}
                       bgColor="#ffffff"
                       fgColor={user_card.background_color}
-                      logoImage={user_card.company_logo_url}
+                      logoImage={apiAddress + user_card.company_logo_url}
                       logoWidth={40}
                       logoHeight={40}
                       enableCORS="true"

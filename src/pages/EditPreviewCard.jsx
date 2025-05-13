@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useUser } from '../contexts/user_context';
 import { ArrowLeft, Facebook, Globe2, InstagramIcon, LinkedinIcon, Locate, Mail, MapPin, Phone, Pin, Twitter, TwitterIcon, XIcon } from 'lucide-react';
 import FormattedText from '../components/formatter';
+import { apiAddress } from '../services/client';
 
 function EditPreviewCard({previous_action, card_type = null}) {
 
@@ -11,7 +12,7 @@ function EditPreviewCard({previous_action, card_type = null}) {
   const { user_card } = useUser();
 
   useEffect(() => {
-    setVisible(false)
+    // setVisible(false)
   }, []);
 
   return (
@@ -50,12 +51,12 @@ function EditPreviewBasicCard({preview_data}) {
                   </div>
 
                   <div>
-                    <img src={preview_data?.company_logo_url} className='h-[60px] max-w-fit rounded-xl' />
+                    <img src={ apiAddress + preview_data?.company_logo_url} className='h-[60px] max-w-fit rounded-xl' />
                   </div>
 
                 </div>
 
-                <img src={preview_data?.profile_photo_url} className='h-[200px] w-2/5 rounded-xl object-cover' />
+                <img src={apiAddress + preview_data?.profile_photo_url} className='h-[200px] w-2/5 rounded-xl object-cover' />
 
                 </div>
             </div>
@@ -169,10 +170,10 @@ function EditPreviewPremiumCard({preview_data}) {
       <div style={{
           color: preview_data?.text_color,
           backgroundColor: preview_data?.background_color
-        }} className={"w-screen relative min-h-[100dvh] flex flex-col"}>
+        }} className={"w-screen relative min-h-[100dvh] flex flex-col"} style={{fontFamily: preview_data?.font_family}}>
           <div className={`bg-black -mb-12 relative tracking-wide text-white h-[240px] 
             pl-[32px] pr-[32px] rounded-b-2xl`} 
-            style={{ backgroundImage: "url('" + preview_data?.cover_image_url + "')", backgroundPosition: "center",
+            style={{ backgroundImage: "url('" + apiAddress + preview_data?.cover_image_url + "')", backgroundPosition: "center",
               backgroundSize: "cover"
             }}>
             
@@ -195,12 +196,12 @@ function EditPreviewPremiumCard({preview_data}) {
                   </div>
 
                   <div>
-                    <img src={preview_data?.company_logo_url} className='h-[60px] max-w-fit' />
+                    <img src={ apiAddress + preview_data?.company_logo_url} className='h-[60px] max-w-fit' />
                   </div>
 
                 </div>
 
-                <img src={preview_data?.profile_photo_url} className='h-[200px] w-2/5 rounded-xl object-cover' />
+                <img src={ apiAddress + preview_data?.profile_photo_url} className='h-[200px] w-2/5 rounded-xl object-cover' />
 
                 </div>
             </div>

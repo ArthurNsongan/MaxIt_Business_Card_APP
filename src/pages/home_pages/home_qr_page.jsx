@@ -2,6 +2,7 @@ import React, { useRef } from 'react'
 import { useUser } from '../../contexts/user_context'
 import { toPng } from 'html-to-image';
 import { QRCode} from 'react-qrcode-logo'
+import { apiAddress } from '../../services/client';
 
 function HomeQRPage() {
 
@@ -86,7 +87,7 @@ function HomeQRPage() {
                       quietZone={10}
                       bgColor="#ffffff"
                       fgColor={user_card.background_color}
-                      logoImage={user_card.company_logo_url}
+                      logoImage={apiAddress + user_card.company_logo_url}
                       logoWidth={80}
                       logoHeight={80}
                       enableCORS="true"

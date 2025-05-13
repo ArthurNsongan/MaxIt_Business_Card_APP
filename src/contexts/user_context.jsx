@@ -68,7 +68,7 @@ export function UserContextProvider({ children }) {
         setLoading({...loading, authenticated: false});
       }
     } else {
-      setLoading({...loading, authenticated: false})
+      setLoading({...loading, authenticated: false, checked: false})
     }
   }, []);
 
@@ -76,11 +76,13 @@ export function UserContextProvider({ children }) {
       console.log("user_carx", user_card)
   })
 
-  const { execute: getData, error} = useApi(userService.get_user_card_route);
+  const { execute: getData } = useApi(userService.get_user_card_route);
 
   useEffect(() => {
     async function getUserData() {
-      if(user != null && user_card == null) {
+      if(user == null) {
+        // setLoading({...loading, checked: false, authenticated: false})
+      } else if(user != null && user_card == null) {
         const { data, error } = await getData(user.phoneNumber);
         if(data != null) {
           console.log(")data)", data)

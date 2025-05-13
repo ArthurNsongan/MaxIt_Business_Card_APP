@@ -16,7 +16,8 @@ import useApi from '../hooks/useApi';
 import userService from '../services/user_service';
 import LoadingPage from '../components/loading_page';
 import { Frame } from '../components/icons';
-
+import { apiAddress } from '../services/client';
+import { Link } from 'react-router-dom'
 
 export const formatSocialMedia = (p) => {
     switch(p) {
@@ -54,7 +55,7 @@ function EditCard() {
     twitter_url: '',
     instagram_url: '',
     facebook_url: '',
-    other_socials: {},
+    other_socials: "",
     profile_photo_url: '',
     company_logo_url: '',
     cover_image_url: '',
@@ -135,7 +136,10 @@ useEffect(() => {
 
       setFormData(prev => ({
         ...prev,
-        ...user_card
+        ...user_card,
+        profile_photo_url: user_card.profile_photo_url == null ? "" : apiAddress + user_card.profile_photo_url,
+        company_logo_url: user_card.company_logo_url == null ? "" :apiAddress + user_card.company_logo_url,
+        cover_image_url: user_card.cover_image_url == null ? "" :apiAddress + user_card.cover_image_url,
       }));
     } else if(user?.phoneNumber){
         console.log("currentuser", user , user_card);
@@ -451,12 +455,12 @@ useEffect(() => {
                             <p className='mt-4 mb-4 text-xl font-bold text-center'>Votre carte de digitale enregistrée avec succès !</p>
 
                             <div className='w-full flex items-center flex-col p-3'>
-                                <Link href="/subscription-plans" className='bg-black flex items-center justify-between text-white text-sm rounded text-primary pt-1 pb-1 font-bold tracking-wide text-center m-2 w-full'>
+                                <Link to="/subscription-plans" className='bg-black flex items-center justify-between text-white text-sm rounded text-primary pt-1 pb-1 font-bold tracking-wide text-center m-2 w-full'>
                                     <span className='block m-2'></span>
                                     <span className='pl-2 pr-2'>Prévisualiser</span>
                                     <span className='block m-2'><ArrowRight /></span>
                                 </Link>
-                                <Link href="/" className='bg-primary/15 border-2 border-primary flex items-center justify-between text-sm rounded text-primary font-bold text-center pt-1 pb-1 m-2 w-full'>
+                                <Link to="/" className='bg-primary/15 border-2 border-primary flex items-center justify-between text-sm rounded text-primary font-bold text-center pt-1 pb-1 m-2 w-full'>
                                     <span className='block m-2'><ArrowLeft /></span>
                                     <span className='flex items-center pl-2 pr-2'><Home className='mr-2' size={18}/> Retour à l'accueil</span>
                                     <span className='block m-2'></span>

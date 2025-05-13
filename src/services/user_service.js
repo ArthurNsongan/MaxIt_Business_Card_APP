@@ -1,10 +1,10 @@
 import apiClient from "./client";
 
 const PATHS = {
-    CREATE: '/users/',
-    UPLOAD_PROFILE_PHOTO: '/users/{phoneNumber}/upload/profile',
-    UPLOAD_COMPANY_LOGO: '/users/{phoneNumber}/upload/logo',
-    UPLOAD_COVER_IMAGE: '/users/{phoneNumber}/upload/cover',
+    CREATE: '/api/cards/',
+    UPLOAD_PROFILE_PHOTO: '/api/cards/{phoneNumber}/upload/profile',
+    UPLOAD_COMPANY_LOGO: '/api/cards/{phoneNumber}/upload/logo',
+    UPLOAD_COVER_IMAGE: '/api/cards/{phoneNumber}/upload/cover',
   };
   
   // Auth services
