@@ -169,8 +169,9 @@ function EditPreviewPremiumCard({preview_data}) {
       <>
       <div style={{
           color: preview_data?.text_color,
-          backgroundColor: preview_data?.background_color
-        }} className={"w-screen relative min-h-[100dvh] flex flex-col"} style={{fontFamily: preview_data?.font_family}}>
+          backgroundColor: preview_data?.background_color,
+          fontFamily: preview_data?.font_family
+        }} className={"w-screen relative min-h-[100dvh] flex flex-col"}>
           <div className={`bg-black -mb-12 relative tracking-wide text-white h-[240px] 
             pl-[32px] pr-[32px] rounded-b-2xl`} 
             style={{ backgroundImage: "url('" + apiAddress + preview_data?.cover_image_url + "')", backgroundPosition: "center",
