@@ -5,6 +5,7 @@ import { QRCode} from 'react-qrcode-logo'
 import { Link } from 'react-router-dom';
 import { Globe } from 'lucide-react';
 import { apiAddress } from '../../services/client';
+import { PATHS } from '../../services/user_service';
 
 function HomeCardPage() {
 
@@ -145,7 +146,7 @@ function HomeCardPage() {
                 <div className="w-1/2 flex flex-col justify-center items-center">
                   <div ref={qrCodeRef} className="">
                     <QRCode
-                      value={import.meta.env.VITE_API_URL + "/users/card/" + user_card.phone_number}
+                      value={import.meta.env.VITE_API_URL + '/render/' + user_card.phone_number}
                       size={120}
                       quietZone={10}
                       bgColor="#ffffff"

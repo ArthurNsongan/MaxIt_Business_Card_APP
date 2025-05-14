@@ -1,6 +1,6 @@
 import apiClient from "./client";
 
-const PATHS = {
+export const PATHS = {
     CREATE: '/api/cards/',
     UPLOAD_PROFILE_PHOTO: '/api/cards/{phoneNumber}/upload/profile',
     UPLOAD_COMPANY_LOGO: '/api/cards/{phoneNumber}/upload/logo',

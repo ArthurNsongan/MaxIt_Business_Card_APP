@@ -3,6 +3,7 @@ import { useUser } from '../../contexts/user_context'
 import { toPng } from 'html-to-image';
 import { QRCode} from 'react-qrcode-logo'
 import { apiAddress } from '../../services/client';
+import { PATHS } from '../../services/user_service';
 
 function HomeQRPage() {
 
@@ -82,7 +83,7 @@ function HomeQRPage() {
                 <div className="w-full flex flex-col justify-center items-center">
                   <div className="">
                     <QRCode
-                      value={import.meta.env.VITE_API_URL + "/users/card/" + user_card.phone_number}
+                      value={import.meta.env.VITE_API_URL + '/render/' + user_card.phone_number}
                       size={280}
                       quietZone={10}
                       bgColor="#ffffff"
