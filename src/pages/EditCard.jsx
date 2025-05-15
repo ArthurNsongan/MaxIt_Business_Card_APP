@@ -18,6 +18,8 @@ import LoadingPage from '../components/loading_page';
 import { Frame } from '../components/icons';
 import { apiAddress } from '../services/client';
 import { Link } from 'react-router-dom'
+import ColorPicker from '../components/color_picker';
+import FontSelector from '../components/font-selector';
 
 export const formatSocialMedia = (p) => {
     switch(p) {
@@ -898,7 +900,7 @@ useEffect(() => {
                         <div className="mb-6">
                         <label className="block mb-3 font-medium">Couleur d'arrière-plan</label>
                         <div className="flex flex-wrap gap-3">
-                            {colorOptions.map((color, colorIndex) => (
+                            {/* {colorOptions.map((color, colorIndex) => (
                             <button
                                 key={"cb_" + colorIndex}
                                 type="button"
@@ -912,7 +914,11 @@ useEffect(() => {
                                 title={color}
                                 aria-label={color}
                             />
-                            ))}
+                            ))} */}
+                            <ColorPicker 
+                                color={formData.background_color == "" || formData.background_color == null ? "#ff7900" : formData.background_color}
+                                onChange={(color) => setFormData(prev => ({ ...prev, background_color: color }))}
+                            />
                         </div>
                         </div>
 
@@ -938,18 +944,24 @@ useEffect(() => {
                         </div>
 
                         <div className="mb-6">
-                        <label htmlFor="font_family" className="block mb-2 font-medium">Sélectionnez la police de votre choix</label>
-                        <select
-                            id="font_family"
-                            name="font_family"
-                            value={formData.font_family}
-                            onChange={handleChange}
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#4361ee] focus:border-transparent"
-                        >
-                            {fontOptions.map((font) => (
-                            <option key={font.value} value={font.value}>{font.label}</option>
-                            ))}
-                        </select>
+                            <label htmlFor="font_family" className="block mb-2 font-medium">Sélectionnez la police de votre choix</label>
+                            {/* <select
+                                id="font_family"
+                                name="font_family"
+                                value={formData.font_family}
+                                onChange={handleChange}
+                                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#4361ee] focus:border-transparent"
+                            >
+                                {fontOptions.map((font) => (
+                                <option key={font.value} value={font.value}>{font.label}</option>
+                                ))}
+                            </select> */}
+                            <FontSelector 
+                                id="font_family"
+                                name="font_family"
+                                value={formData.font_family}
+                                onChange={(value) => setFormData(prev => ({ ...prev, font_family: value }))} />
+
                         </div>
 
                         
