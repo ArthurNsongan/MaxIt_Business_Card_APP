@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useAppBar } from '../contexts/appbar_context';
 import { useRef } from 'react';
-import { ArrowLeft, ArrowRight, Eye, Home, Image, ImageIcon, Landmark, Loader, Loader2, Mail, MailIcon, MapPin, PhoneCallIcon, Plus, Save, User, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Eye, Home, Image, ImageIcon, InfoIcon, Landmark, Loader, Loader2, Mail, MailIcon, MapPin, PhoneCallIcon, Plus, Save, User, X } from 'lucide-react';
 import { 
     Facebook, 
     Twitter, 
@@ -32,6 +32,9 @@ function goToTop() {
     // Do whatever "Next" functionality you have here
     window.scrollTo({ top: 0 }); // Scrolls to the top smoothly
 }
+
+const MAX_FILE_SIZE = 2 * 1024 * 1024;
+
 
 function EditCard() {
 
@@ -96,7 +99,6 @@ function EditCard() {
  }
  
  const [currentStep, setCurrentStep] = useState(1);
- const [cardType, setCardType] = useState("basic")
 
 useEffect(() => {
     console.log("currentStep :", currentStep)
@@ -219,7 +221,31 @@ useEffect(() => {
         newErrors.email = 'Please enter a valid email';
       }
     }
-    
+
+    if(step === 3) {
+        // if (formData.linkedin_url && !/^(https?:\/\/)?(www\.)?linkedin\.com\/in\/[a-zA-Z0-9_-]+$/.test(formData.linkedin_url)) {
+        //     newErrors.linkedin_url = 'Please enter a valid LinkedIn URL';
+        // }
+        // if (formData.twitter_url && !/^(https?:\/\/)?(www\.)?twitter\.com\/[a-zA-Z0-9_]+$/.test(formData.twitter_url)) {
+        //     newErrors.twitter_url = 'Please enter a valid Twitter URL';
+        // }
+        // if (formData.instagram_url && !/^(https?:\/\/)?(www\.)?instagram\.com\/[a-zA-Z0-9_.]+$/.test(formData.instagram_url)) {
+        //     newErrors.instagram_url = 'Please enter a valid Instagram URL';
+        // }
+        // if (formData.facebook_url && !/^(https?:\/\/)?(www\.)?facebook\.com\/[a-zA-Z0-9_.]+$/.test(formData.facebook_url)) {
+        //     newErrors.facebook_url = 'Please enter a valid Facebook URL';
+        // }
+    }
+
+    if(step === 4) {
+        let fields = Object.keys(files);
+        fields.forEach((field) => {
+            if (files[field] && files[field].size > MAX_FILE_SIZE) {
+                newErrors[field] = "L'image doit faire moins de 2 Mo";
+            }
+        });
+    }
+
     setErrors(newErrors);
     console.log("newErrors", newErrors);
     return Object.keys(newErrors).length === 0;
@@ -559,8 +585,9 @@ useEffect(() => {
                             value={formData.job_title}
                             onChange={handleChange}
                             placeholder="e.g., Full Stack Developer"
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#4361ee] focus:border-transparent"
+                            className={`w-full px-4 py-3 rounded-lg border ${errors.job_title ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-[#4361ee] focus:border-transparent`}
                         />
+                        {errors.job_title && <p className="mt-1 text-sm text-red-500">{errors.job_title}</p>}
                         </div>
 
                         <div className="mb-6">
@@ -571,8 +598,9 @@ useEffect(() => {
                             name="company"
                             value={formData.company}
                             onChange={handleChange}
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#4361ee] focus:border-transparent"
+                            className={`w-full px-4 py-3 rounded-lg border ${errors.company ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-[#4361ee] focus:border-transparent`}
                         />
+                        {errors.company && <p className="mt-1 text-sm text-red-500">{errors.company}</p>}
                         </div>
 
                         <div className="mb-6">
@@ -583,8 +611,9 @@ useEffect(() => {
                             value={formData.bio}
                             onChange={handleChange}
                             placeholder="Decrivez vous en quelques mots..."
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#4361ee] focus:border-transparent min-h-[120px]"
+                            className={`w-full px-4 py-3 rounded-lg border ${errors.bio ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-[#4361ee] focus:border-transparent min-h-[120px]`}
                         />
+                        {errors.bio && <p className="mt-1 text-sm text-red-500">{errors.bio}</p>}
                         </div>
                     </div>
                     )}
@@ -647,9 +676,10 @@ useEffect(() => {
                                 name="address"
                                 value={formData.address}
                                 onChange={handleChange}
-                                className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#4361ee] focus:border-transparent"
+                                className={`w-full pl-10 pr-4 py-3 rounded-lg border ${errors.address ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-[#4361ee] focus:border-transparent`}
                                 placeholder="123 Main Street"
                                 />
+                                {errors.address && <p className="mt-1 text-sm text-red-500">{errors.address}</p>}
                             </div>
                         </div>
 
@@ -662,8 +692,9 @@ useEffect(() => {
                                 name="city"
                                 value={formData.city}
                                 onChange={handleChange}
-                                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#4361ee] focus:border-transparent"
+                                className={`w-full px-4 py-3 rounded-lg border ${errors.city ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-[#4361ee] focus:border-transparent`}
                                 />
+                                {errors.city && <p className="mt-1 text-sm text-red-500">{errors.city}</p>}
                             </div>
                             <div className="flex-1">
                                 <label htmlFor="country" className="block mb-2 font-medium">Pays</label>
@@ -673,8 +704,9 @@ useEffect(() => {
                                 name="country"
                                 value={formData.country}
                                 onChange={handleChange}
-                                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#4361ee] focus:border-transparent"
+                                className={`w-full px-4 py-3 rounded-lg border ${errors.country ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-[#4361ee] focus:border-transparent`}
                                 />
+                                {errors.country && <p className="mt-1 text-sm text-red-500">{errors.country}</p>}
                             </div>
                         </div>
 
@@ -686,9 +718,10 @@ useEffect(() => {
                                 name="website_url"
                                 value={formData.website_url}
                                 onChange={handleChange}
-                                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#4361ee] focus:border-transparent"
+                                className={`w-full px-4 py-3 rounded-lg border ${errors.website_url ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-[#4361ee] focus:border-transparent`}
                                 placeholder="www.votre_siteweb.com"
                             />
+                            {errors.website_url && <p className="mt-1 text-sm text-red-500">{errors.website_url}</p>}
                         </div>
                     </div>
                     )}
@@ -813,10 +846,11 @@ useEffect(() => {
                             <button
                             type="button"
                             onClick={() => fileInputRef.current?.click()}
-                            className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors"
+                            className={`px-4 py-2 rounded-lg border ${errors.profile_photo_url ? 'border-red-500' : 'border-gray-300'} hover:bg-gray-50 transition-colors`}
                             >
                             {formData.profile_photo_url ? 'Modifier votre photo de profil' : 'Charger votre photo de profil'}
                             </button>
+                            {errors.profile_photo_url && <p className="mt-1 text-sm text-red-500">{errors.profile_photo_url}</p>}
                         </div>
                         </div>
 
@@ -847,16 +881,18 @@ useEffect(() => {
                             <button
                             type="button"
                             onClick={() => companyLogoRef.current?.click()}
-                            className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors"
+                            className={`px-4 py-2 rounded-lg border ${errors.company_logo_url ? 'border-red-500' : 'border-gray-300'} hover:bg-gray-50 transition-colors`}
                             >
                             {formData.company_logo_url ? 'Modifier le logo' : 'Charger le logo'}
                             </button>
+                            {errors.company_logo_url && <p className="mt-1 text-sm text-red-500">{errors.company_logo_url}</p>}
                         </div>
                         </div>
 
                             {/* Cover Image Upload */}
                             <div className="mb-6">
                             <label className="block mb-3 font-medium">Image de couverture</label>
+                            <span className='bg-primary/15 text-center text-bold text-xs mb-2 text-primary p-2 flex items-center justify-center rounded'><InfoIcon size={20} className='mr-2'/> Non disponible pour les cartes &laquo; Basique &raquo; </span>
                             <div className="flex flex-col gap-4">
                                 {formData.cover_image_url ? (
                                 <img 
@@ -881,10 +917,11 @@ useEffect(() => {
                                 <button
                                 type="button"
                                 onClick={() => coverImageRef.current?.click()}
-                                className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors self-start"
+                                className={`px-4 py-2 rounded-lg border ${errors.cover_image_url ? 'border-red-500' : 'border-gray-300'} hover:bg-gray-50 transition-colors self-start`}
                                 >
                                 {formData.cover_image_url ? 'Modifier l\'image' : 'Charger l\'image'}
                                 </button>
+                                {errors.cover_image_url && <p className="mt-1 text-sm text-red-500">{errors.cover_image_url}</p>}
                             </div>
                             </div>
                         
