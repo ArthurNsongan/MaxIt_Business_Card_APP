@@ -149,7 +149,7 @@ export default function FontSelector({ initialValue = "Roboto", onChange }) {
         className="w-full flex items-center justify-between text-left font-normal h-14 px-4 relative overflow-hidden border-2 rounded-md transition-all duration-300 focus:outline-none"
         style={{ borderColor: "#e2e8f0" }}
       >
-        <div className="flex items-center gap-3 z-10">
+        <div className="flex items-center gap-3 z-[30]">
           <div className="h-8 w-8 rounded-full flex items-center justify-center bg-gray-100">
             <FontIcon className="h-4 w-4 opacity-50" />
           </div>
@@ -173,7 +173,7 @@ export default function FontSelector({ initialValue = "Roboto", onChange }) {
 
       {/* Popover Content */}
       {isOpen && (
-        <div className="absolute z-50 mt-2 w-full max-w-md p-3 bg-white rounded-md shadow-lg border border-gray-200 max-h-96 overflow-auto">
+        <div className="absolute z-[100000] mt-2 w-full max-w-md p-3 bg-white rounded-md shadow-lg border border-gray-200 max-h-96 overflow-auto">
           {/* Search Input */}
           <div className="mb-3">
             <div className="relative">

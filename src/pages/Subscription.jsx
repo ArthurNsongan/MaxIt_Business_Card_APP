@@ -8,7 +8,7 @@ export default function Subscription() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState('right');
   const [isAnimating, setIsAnimating] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+  // const [menuOpen, setMenuOpen] = useState(false);
 
   const navigateToPage = (index, dir) => {
     if (isAnimating) return;
@@ -30,6 +30,7 @@ export default function Subscription() {
   const pages = ["forfait", "preview"];
 
   const goToPrevious = () => {
+    setPageTitle("forfait");
     const newIndex = activeIndex === 0 ? pages.length - 1 : activeIndex - 1;
     window.scrollTo({
       top: 0,         // vertical position in pixels
@@ -40,6 +41,7 @@ export default function Subscription() {
   };
 
   const goToNext = () => {
+    setPageTitle("preview");
     const newIndex = (activeIndex + 1) % pages.length;
     window.scrollTo({
       top: 0,         // vertical position in pixels
@@ -58,7 +60,8 @@ export default function Subscription() {
     description : ""
   }];
 
-  const [selectedPlan, setSelectedPlan] = useState(null);
+  const [selectedPlan, setSelectedPlan] = useState("");
+  const [pageTitle, setPageTitle] = useState("forfait");
 
   useEffect(() => {
     console.log("selectedPlan : ", selectedPlan)
@@ -138,15 +141,13 @@ export default function Subscription() {
                       </div>          
                     </div>
                   </div> :
-                  page == "preview" ? 
-                        <EditPreviewCard previous_action={goToPrevious} card_type={selectedPlan} />
+                  page == "preview" && pageTitle == "preview" ? 
+                       <EditPreviewCard previous_action={goToPrevious} card_type={selectedPlan} />
                        : <></>
                 }
 
             </div>
           ))}
-          
-          
         </div>
     </>
   )

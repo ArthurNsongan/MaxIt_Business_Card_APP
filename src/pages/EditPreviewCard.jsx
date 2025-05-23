@@ -5,6 +5,7 @@ import { useUser } from '../contexts/user_context';
 import { ArrowLeft, Facebook, Globe2, InstagramIcon, LinkedinIcon, Locate, Mail, MapPin, Phone, Pin, Twitter, TwitterIcon, XIcon } from 'lucide-react';
 import FormattedText from '../components/formatter';
 import { apiAddress } from '../services/client';
+import IframeViewer from '../components/iframe_viewer';
 
 function EditPreviewCard({previous_action, card_type = null}) {
 
@@ -13,6 +14,7 @@ function EditPreviewCard({previous_action, card_type = null}) {
 
   useEffect(() => {
     // setVisible(false)
+    console.log("card_type", card_type);
   }, []);
 
   return (
@@ -20,9 +22,10 @@ function EditPreviewCard({previous_action, card_type = null}) {
     <button className='fixed z-[100] top-2 right-4 flex items-center 
         justify-center h-12 w-12 rounded bg-black text-primary' onClick={previous_action}><ArrowLeft /></button>
     {
-      card_type == null ? <EditPreviewBasicCard preview_data={user_card} card_type={card_type}/> :
-      card_type == "basic" ? <EditPreviewBasicCard preview_data={user_card} card_type={card_type} /> :
-      card_type == "premium" ? <EditPreviewPremiumCard preview_data={user_card} card_type={card_type} /> : <></>
+      // card_type == null ? <EditPreviewBasicCard preview_data={user_card} card_type={card_type}/> :
+      // card_type == "basic" ? <EditPreviewBasicCard preview_data={user_card} card_type={card_type} /> :
+      // card_type == "premium" ? <EditPreviewPremiumCard preview_data={user_card} card_type={card_type} /> : <></>
+      user_card ? <IframeViewer url={apiAddress + "/render/preview/" + user_card.phone_number + "/" + card_type} /> : <></>
     }
     </>
   );
