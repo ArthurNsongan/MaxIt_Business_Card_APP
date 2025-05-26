@@ -5,7 +5,7 @@ import Login from './pages/Login'
 import AppBar from './components/appbar'
 import EditCard from './pages/EditCard'
 import { useEffect, useState } from 'react'
-// import { pageInAnimation } from './utils/animations';
+import { pageInAnimation } from './utils/animations';
 import { AppBarProvider } from './contexts/appbar_context'
 import { UserContextProvider } from './contexts/user_context'
 import Subscription from './pages/Subscription'
@@ -17,7 +17,7 @@ function App() {
   
   useEffect(() => {
     if(!played) {
-      // pageInAnimation();
+      pageInAnimation();
       setPlayed(true);
     }
   }, [played])
@@ -40,7 +40,7 @@ function App() {
           </AppBarProvider>          
         </BrowserRouter>
       </UserContextProvider>
-      {/* <Splashscreen /> */}
+      <Splashscreen />
     </>
   )
 }

@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAppBar } from '../contexts/appbar_context';
 import HomeCardPage from './home_pages/home_card_page';
 import HomeQRPage from './home_pages/home_qr_page';
+import HomeNoSubscription from './home_pages/home_no_subscription';
 
 export default function Home() {
 
@@ -56,8 +57,10 @@ export default function Home() {
       <div className="w-full min-h-[calc(100dvh-60px)] flex flex-col items-center justify-center">
         <Loader className="animate-spin duration-2000 text-primary" size={120}></Loader>
       </div>
-    : ((loading.authenticated == true && loading.checked == true) && loading.hasSubscription == null) ?
+    : (loading.authenticated == true && loading.checked == true && loading.hasSubscription == true) ?
       <HomeCardPage />
+    : (loading.authenticated == true && loading.checked == true && loading.hasSubscription == false) ?
+      <HomeNoSubscription />
     : ((loading.authenticated == false && loading.checked == false) ||
       (loading.authenticated == false && loading.checked == true) ||
       (loading.authenticated == true && loading.checked == false)) ?

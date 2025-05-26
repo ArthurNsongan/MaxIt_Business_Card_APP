@@ -21,12 +21,12 @@ export const pageInAnimation = () => {
         marginTop: 0,
         duration: 1
       })
+      .to(splashscreenODC, {
+        opacity: 0
+      })
       .to(bars, {
         backgroundColor: "black",
         duration: 0.3
-      })
-      .to(splashscreenODC, {
-        opacity: 0
       })
       .to(splashscreenText, {
         color: "white"

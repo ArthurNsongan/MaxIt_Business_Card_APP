@@ -2,6 +2,8 @@ import { AlertTriangleIcon, ChevronsDown, ChevronsUp, Menu } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { SubscriptionSlideDownCard } from '../components/slide_down_card'
 import EditPreviewCard from './EditPreviewCard';
+import subscriptionService from '../services/subscription_service';
+import { useUser } from '../contexts/user_context';
 
 export default function Subscription() {
 
@@ -9,6 +11,8 @@ export default function Subscription() {
   const [direction, setDirection] = useState('right');
   const [isAnimating, setIsAnimating] = useState(false);
   // const [menuOpen, setMenuOpen] = useState(false);
+
+  const { loading, subscription } = useUser();
 
   const navigateToPage = (index, dir) => {
     if (isAnimating) return;
@@ -50,22 +54,40 @@ export default function Subscription() {
     navigateToPage(newIndex, 'right');
   };
 
-  const plans= [{
-    title: "Carte Basique",
-    value: "basic",
-    description : ""
-  }, {
-    title: "Carte Premium",
-    value: "premium",
-    description : ""
-  }];
+  // const plans= [{
+  //   title: "Carte Basique",
+  //   value: "basic",
+  //   description : ""
+  // }, {
+  //   title: "Carte Premium",
+  //   value: "premium",
+  //   description : ""
+  // }];
 
-  const [selectedPlan, setSelectedPlan] = useState("");
+  const [plans, setPlans] = useState([]);
+
+  const [selectedPlan, setSelectedPlan] = useState(null);
   const [pageTitle, setPageTitle] = useState("forfait");
 
   useEffect(() => {
     console.log("selectedPlan : ", selectedPlan)
   }, [selectedPlan]);
+
+  useEffect(() => {
+    // Simulate fetching plans from an API
+    const fetchPlans = async () => {
+      const response = await subscriptionService.get_all_active_subscriptions_route();
+      console.log("Plans fetched: ", response);
+      if (response && Array.isArray(response)) {
+        setPlans(response);
+      } else {
+        console.error("Failed to fetch plans or invalid response format");
+        setPlans(null);
+      }
+    };
+    
+    fetchPlans();
+  }, []);
 
   // Handle keyboard navigation
   useEffect(() => {
@@ -106,12 +128,12 @@ export default function Subscription() {
 
   return (
     <>
-        <div className={" min-h-[100dvh] w-screen relative " + (activeIndex == 0 ? "overflow-hidden" : "overflow-x-hidden")}>
+        <div className={" min-h-[calc(100dvh-60px)] w-screen relative " + (activeIndex == 0 ? "overflow-hidden" : "overflow-x-hidden")}>
           {/* Full-page slides */}
           {pages.map((page, index) => (
             <div
               key={index}
-              className={`absolute inset-0 ${page.color} transition-all duration-700 ease-in-out ${getPageClasses(index)}`}
+              className={`absolute inset-0 transition-all duration-700 ease-in-out ${getPageClasses(index)}`}
             >
               {
                   page == "forfait" ?
@@ -126,10 +148,16 @@ export default function Subscription() {
 
                           <div className='p-4 w-full'>
                             {
-                              plans.map((plan) => {
-                                return <SubscriptionSlideDownCard className="mt-5 mb-5" 
-                                  expanded={plan.value == selectedPlan} active_background={"bg-primary"} 
-                                  active_color={"text-primary"} title={plan.title} action={() => { setSelectedPlan(plan.value) }} />
+                              plans.map((plan, pIndex) => {
+                                return <SubscriptionSlideDownCard key={pIndex} className="mt-5 mb-5" 
+                                  expanded={plan.name == selectedPlan?.name} active_background={"bg-primary"} 
+                                  active_color={"text-primary"} title={<>Carte &laquo; {plan.name} &raquo;</>} 
+                                  action={() => { setSelectedPlan(plan) }}>
+                                  <div className='flex flex-col items-center justify-center text-center'>
+                                    <div className='text-sm'>{plan.description}</div>
+                                    <div className='mt-2 text-lg font-bold'>{plan.price} U</div>    
+                                  </div>                                  
+                                  </SubscriptionSlideDownCard>
                               })
                             }
                           </div>
@@ -142,8 +170,8 @@ export default function Subscription() {
                     </div>
                   </div> :
                   page == "preview" && pageTitle == "preview" ? 
-                       <EditPreviewCard previous_action={goToPrevious} card_type={selectedPlan} />
-                       : <></>
+                       <EditPreviewCard previous_action={goToPrevious} card_type={selectedPlan.name} plan={selectedPlan} /> :
+                       <></>
                 }
 
             </div>

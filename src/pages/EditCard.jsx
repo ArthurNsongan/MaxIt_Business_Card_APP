@@ -77,7 +77,7 @@ function EditCard() {
   const textColorOptions = [
     { value: '#1e1e24', label: 'Dark' },
     { value: '#ffffff', label: 'White' },
-    { value: '#f8f9fa', label: 'Light' }
+    { value: '#cccccc', label: 'Light' }
   ];
   
   const fontOptions = [
@@ -954,7 +954,11 @@ useEffect(() => {
                             ))} */}
                             <ColorPicker 
                                 color={formData.background_color == "" || formData.background_color == null ? "#ff7900" : formData.background_color}
-                                onChange={(color) => setFormData(prev => ({ ...prev, background_color: color }))}
+                                onChange={(color) => {
+                                    console.log("Color changed:", color)
+                                    setFormData({ ...formData, background_color: color })
+                                }}
+                                value={formData.background_color}
                             />
                         </div>
                         </div>

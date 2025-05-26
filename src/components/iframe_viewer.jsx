@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react"
 
 export default function IframeViewer({
   url,
-  height = "100dvh",
+  height = "100%", // Adjust height to fit the viewport minus some padding
   width = "100%",
   title = "Embedded content",
   className = "",
@@ -35,7 +35,7 @@ export default function IframeViewer({
   }
 
   return (
-    <div className={`w-full ${className}`}>
+    <div className={`w-full ${className} rounded-xl shadow p-2`}>
 
 
       {/* IFrame Container */}

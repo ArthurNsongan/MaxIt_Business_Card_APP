@@ -1,5 +1,5 @@
 // UserContext.js
-import { createContext, useState, useContext, useEffect, use } from 'react';
+import { createContext, useState, useContext, useEffect } from 'react';
 import userService from '../services/user_service';
 import useApi from '../hooks/useApi';
 
@@ -35,6 +35,7 @@ const formatPhoneNumber = (phoneNumber) => {
 // Create the provider component
 export function UserContextProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [subscription, setSubscription] = useState(null);
   const [user_card, setUserCard] = useState(null);
   const [loading, setLoading] = useState({
     checked: null,
@@ -76,7 +77,7 @@ export function UserContextProvider({ children }) {
       console.log("user_carx", user_card)
   })
 
-  const { execute: getData } = useApi(userService.get_user_card_route);
+  const { execute: getData } = useApi(userService.check_user_card_route);
 
   useEffect(() => {
     async function getUserData() {
@@ -84,10 +85,18 @@ export function UserContextProvider({ children }) {
         // setLoading({...loading, checked: false, authenticated: false})
       } else if(user != null && user_card == null) {
         const { data, error } = await getData(user.phoneNumber);
+        let newValue = {...loading};
         if(data != null) {
           console.log(")data)", data)
-          setUserCard(data);
-          setLoading({...loading, checked: true})
+          setUserCard(data.card);
+          newValue = {...loading, checked: true};
+          if(data.subscription) {
+            setSubscription(data.subscription);
+            newValue = {...newValue, hasSubscription: true};
+          } else {
+            newValue = {...newValue, hasSubscription: false};
+          }
+          setLoading({...newValue });
         }
         else if(error){
           console.log(")error)", error)
@@ -141,7 +150,8 @@ export function UserContextProvider({ children }) {
     loading,
     validatePhoneNumber: isCameroonPhoneNumber,
     setUserCard,
-    setLoading
+    setLoading,
+    subscription
   };
   
   return (

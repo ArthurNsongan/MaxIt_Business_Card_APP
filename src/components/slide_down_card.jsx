@@ -30,10 +30,10 @@ export function SubscriptionSlideDownCard({action, expanded, className, active_b
 
 
   return (
-    <div className={className + " flex flex-col w-full max-w-md mx-auto"}>
+    <div className={className + " flex items-center justify-center flex-col w-full max-w-md mx-auto"}>
       {/* Unified card with consistent rounded corners */}
       <div 
-        className={`${getBackgroundColor()} ${getTextColor()} rounded-2xl shadow overflow-hidden transition-all duration-300`}
+        className={`flex flex-col items-center justify-center ${getBackgroundColor()} ${getTextColor()} rounded-2xl shadow overflow-hidden transition-all duration-300`}
         onClick={toggleExpand}
       >
         {/* Main card content */}
@@ -44,7 +44,7 @@ export function SubscriptionSlideDownCard({action, expanded, className, active_b
         {/* Sliding text area - simple text only */}
         <div 
           className={`overflow-hidden transition-all duration-500 ease-in-out ${
-            isExpanded ? 'max-h-24 opacity-100' : 'max-h-0 opacity-0'
+            isExpanded ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
           }`}
         >
           <div className="px-6 pb-6">

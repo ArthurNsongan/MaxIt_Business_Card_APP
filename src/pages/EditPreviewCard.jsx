@@ -7,7 +7,7 @@ import FormattedText from '../components/formatter';
 import { apiAddress } from '../services/client';
 import IframeViewer from '../components/iframe_viewer';
 
-function EditPreviewCard({previous_action, card_type = null}) {
+function EditPreviewCard({previous_action, plan = null, card_type = null}) {
 
   const { setVisible } = useAppBar();
   const { user_card } = useUser();
@@ -19,14 +19,17 @@ function EditPreviewCard({previous_action, card_type = null}) {
 
   return (
     <>
-    <button className='fixed z-[100] top-2 right-4 flex items-center 
-        justify-center h-12 w-12 rounded bg-black text-primary' onClick={previous_action}><ArrowLeft /></button>
+    <button className='fixed z-[100] top-2 left-2 flex items-center 
+        justify-center h-12 w-12 rounded bg-primary text-white border-4 border-white' onClick={previous_action}><ArrowLeft /></button>
     {
       // card_type == null ? <EditPreviewBasicCard preview_data={user_card} card_type={card_type}/> :
       // card_type == "basic" ? <EditPreviewBasicCard preview_data={user_card} card_type={card_type} /> :
       // card_type == "premium" ? <EditPreviewPremiumCard preview_data={user_card} card_type={card_type} /> : <></>
-      user_card ? <IframeViewer url={apiAddress + "/render/preview/" + user_card.phone_number + "/" + card_type} /> : <></>
+      user_card ? <IframeViewer height='calc(100dvh - 140px)' url={apiAddress + "/render/preview/" + user_card.phone_number + "/" + plan.template_id } /> : <></>
     }
+    <div className="flex items-center px-2">
+      <button className='p-2 mt-2 mb-2 rounded-lg text-primary bg-black w-full text-center font-medium'>Valider le paiement</button>
+    </div>
     </>
   );
 }

@@ -2,6 +2,7 @@ import apiClient from "./client";
 
 export const PATHS = {
     CREATE: '/api/cards/',
+    CHECK_USER: '/api/cards/check_card/',
     UPLOAD_PROFILE_PHOTO: '/api/cards/{phoneNumber}/upload/profile',
     UPLOAD_COMPANY_LOGO: '/api/cards/{phoneNumber}/upload/logo',
     UPLOAD_COVER_IMAGE: '/api/cards/{phoneNumber}/upload/cover',
@@ -15,6 +16,10 @@ export const PATHS = {
     },
     get_user_card_route: async (phoneNumber) => {
         const response = await apiClient.get(PATHS.CREATE + phoneNumber , {});
+        return response.data;
+    },
+    check_user_card_route: async (phoneNumber) => {
+        const response = await apiClient.get(PATHS.CHECK_USER + phoneNumber , {});
         return response.data;
     },
     update_user_card_route: async (phoneNumber, user_card) => {

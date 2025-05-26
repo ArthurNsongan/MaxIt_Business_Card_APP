@@ -4,6 +4,7 @@ import { toPng } from 'html-to-image';
 import { QRCode} from 'react-qrcode-logo'
 import { apiAddress } from '../../services/client';
 import { PATHS } from '../../services/user_service';
+import { Link } from 'react-router-dom';
 
 function HomeQRPage() {
 
@@ -118,8 +119,8 @@ function HomeQRPage() {
 
           
           <div className='pl-[32px] pr-[32px] flex w-full items-center mt-4 text-white text-sm'>
-              <button onClick={downloadCard} className='btn bg-primary pt-2 pb-2 w-full ml-1 mr-1 rounded'>Télécharger</button>
-              <button className='btn bg-black pt-2 pb-2 w-full ml-1 mr-1 rounded'>Modifier</button>
+            <button onClick={downloadCard} className='btn bg-primary pt-2 pb-2 w-full ml-1 mr-1 rounded'>Télécharger</button>
+            <Link to={"/edit"} className='btn text-center bg-black pt-2 pb-2 w-full ml-1 mr-1 rounded'>Modifier</Link>
           </div>
           
         </div>
