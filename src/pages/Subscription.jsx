@@ -4,12 +4,14 @@ import { SubscriptionSlideDownCard } from '../components/slide_down_card'
 import EditPreviewCard from './EditPreviewCard';
 import subscriptionService from '../services/subscription_service';
 import { useUser } from '../contexts/user_context';
+import { useAppBar } from '../contexts/appbar_context';
 
 export default function Subscription() {
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState('right');
   const [isAnimating, setIsAnimating] = useState(false);
+  const { visible } = useAppBar();
   // const [menuOpen, setMenuOpen] = useState(false);
 
   const { loading, subscription } = useUser();
@@ -73,19 +75,20 @@ export default function Subscription() {
     console.log("selectedPlan : ", selectedPlan)
   }, [selectedPlan]);
 
+  
+  // Simulate fetching plans from an API
+  const fetchPlans = async () => {
+    const response = await subscriptionService.get_all_active_subscriptions_route();
+    console.log("Plans fetched: ", response);
+    if (response && Array.isArray(response)) {
+      setPlans(response);
+    } else {
+      console.error("Failed to fetch plans or invalid response format");
+      setPlans(null);
+    }
+  };
+
   useEffect(() => {
-    // Simulate fetching plans from an API
-    const fetchPlans = async () => {
-      const response = await subscriptionService.get_all_active_subscriptions_route();
-      console.log("Plans fetched: ", response);
-      if (response && Array.isArray(response)) {
-        setPlans(response);
-      } else {
-        console.error("Failed to fetch plans or invalid response format");
-        setPlans(null);
-      }
-    };
-    
     fetchPlans();
   }, []);
 
@@ -128,7 +131,7 @@ export default function Subscription() {
 
   return (
     <>
-        <div className={" min-h-[calc(100dvh-60px)] w-screen relative " + (activeIndex == 0 ? "overflow-hidden" : "overflow-x-hidden")}>
+        <div className={(visible ? "min-h-[calc(100dvh-60px)]" : "min-h-[100dvh]") + " w-screen relative " + (activeIndex == 0 ? "overflow-hidden" : "overflow-x-hidden")}>
           {/* Full-page slides */}
           {pages.map((page, index) => (
             <div

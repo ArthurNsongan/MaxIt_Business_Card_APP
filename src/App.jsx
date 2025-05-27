@@ -24,9 +24,9 @@ function App() {
   
 
   return (
-    <>
+    <>        
+    <BrowserRouter>
       <UserContextProvider>
-        <BrowserRouter>
           <AppBarProvider>
             <AppBar/>
             <div className="bg-white relative rounded-md w-full flex flex-col items-center justify-center">
@@ -38,8 +38,8 @@ function App() {
                 </Routes>
             </div>
           </AppBarProvider>          
-        </BrowserRouter>
       </UserContextProvider>
+    </BrowserRouter>
       <Splashscreen />
     </>
   )

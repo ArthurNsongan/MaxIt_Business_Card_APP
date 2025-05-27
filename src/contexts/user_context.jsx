@@ -2,6 +2,7 @@
 import { createContext, useState, useContext, useEffect } from 'react';
 import userService from '../services/user_service';
 import useApi from '../hooks/useApi';
+import { useNavigate } from 'react-router-dom';
 
 // Create the context
 const UserContext = createContext();
@@ -139,6 +140,20 @@ export function UserContextProvider({ children }) {
     // Remove from localStorage
     localStorage.removeItem(USER_STORAGE_KEY);
   };
+
+  const navigate = useNavigate();
+
+  const resetContext = () => {
+    navigate('/');
+    setUser(null);
+    setUserCard(null);
+    setSubscription(null);
+    setLoading({
+      checked: null,
+      authenticated: null,
+      hasSubscription: null
+    });
+  };
   
   // Value to be provided to consumers
   const value = {
@@ -151,7 +166,8 @@ export function UserContextProvider({ children }) {
     validatePhoneNumber: isCameroonPhoneNumber,
     setUserCard,
     setLoading,
-    subscription
+    subscription,
+    resetContext
   };
   
   return (

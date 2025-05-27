@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useAppBar } from '../contexts/appbar_context'
 import { useEffect } from 'react';
 import { useUser } from '../contexts/user_context';
@@ -6,20 +6,33 @@ import { ArrowLeft, Facebook, Globe2, InstagramIcon, LinkedinIcon, Locate, Mail,
 import FormattedText from '../components/formatter';
 import { apiAddress } from '../services/client';
 import IframeViewer from '../components/iframe_viewer';
+import PaymentOverlay from '../components/payment_overlay';
+import subscriptionService from '../services/subscription_service';
 
 function EditPreviewCard({previous_action, plan = null, card_type = null}) {
 
-  const { setVisible } = useAppBar();
-  const { user_card } = useUser();
+  const { setVisible, visible } = useAppBar();
+  const { user_card, user, resetContext } = useUser();
+
+  const [showPayment, setShowPayment] = useState(false);
 
   useEffect(() => {
-    // setVisible(false)
+    setVisible(false)
     console.log("card_type", card_type);
   }, []);
 
+  const subscribeToPlan = async (plan) => {
+    const response = await subscriptionService.post_subscription_route({
+      plan_id: plan.id,
+      user_id: user_card.user_id
+    });
+    console.log("response", response);
+    return response;
+  }
+
   return (
     <>
-    <button className='fixed z-[100] top-2 left-2 flex items-center 
+    <button className='fixed z-[40] top-2 left-2 flex items-center 
         justify-center h-12 w-12 rounded bg-primary text-white border-4 border-white' onClick={previous_action}><ArrowLeft /></button>
     {
       // card_type == null ? <EditPreviewBasicCard preview_data={user_card} card_type={card_type}/> :
@@ -28,8 +41,10 @@ function EditPreviewCard({previous_action, plan = null, card_type = null}) {
       user_card ? <IframeViewer height='calc(100dvh - 140px)' url={apiAddress + "/render/preview/" + user_card.phone_number + "/" + plan.template_id } /> : <></>
     }
     <div className="flex items-center px-2">
-      <button className='p-2 mt-2 mb-2 rounded-lg text-primary bg-black w-full text-center font-medium'>Valider le paiement</button>
+      <button onClick={() => { setShowPayment(true); console.log("show payment", showPayment);
+      }} className='p-2 mt-2 mb-2 rounded-lg text-primary bg-black w-full text-center font-medium'>Valider le paiement</button>
     </div>
+    { showPayment && plan ? <PaymentOverlay onPaymentSuccess={() => { resetContext()} } plan={plan} onPaymentRequest={() => subscribeToPlan(plan)} isOpen={showPayment} amount={plan ? plan.price : ""} package={plan ? "Forfait " + plan.name : ""} onClose={() => setShowPayment(false)} /> : <></> }
     </>
   );
 }
