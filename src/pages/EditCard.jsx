@@ -1000,7 +1000,7 @@ useEffect(() => {
                             <FontSelector 
                                 id="font_family"
                                 name="font_family"
-                                value={formData.font_family}
+                                initialValue={formData.font_family}
                                 onChange={(value) => setFormData(prev => ({ ...prev, font_family: value }))} />
 
                         </div>

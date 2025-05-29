@@ -50,6 +50,8 @@ export default function Home() {
     }
   };
 
+  const [activeSection, setActiveSection] = useState('Card');
+
   return (
     (((loading.checked == null && loading.authenticated == null) ||  
       (loading.authenticated == true && loading.checked == null) ||
@@ -58,7 +60,61 @@ export default function Home() {
         <Loader className="animate-spin duration-2000 text-primary" size={120}></Loader>
       </div>
     : (loading.authenticated == true && loading.checked == true && loading.hasSubscription == true) ?
-      <HomeCardPage />
+      <>
+        <div className="w-full relative translate-y-[-25px] min-h-[calc(100dvh-60px)] flex flex-col">
+          <div className='bg-black -mb-12 relative tracking-wide text-white pl-[32px] pr-[32px] pb-[60px] pt-[60px] h-[200px] rounded-b-2xl'>
+            <h2 className='text-2xl font-bold'>Bienvenue</h2>
+            <p className='leading-5 text-sm'>Interface de gestion de votre carte de visite digitale</p>
+          </div>
+
+          
+          <div className='flex items-center justify-center px-4 pt-4 pb-2'>
+            <div className='flex w-64 items-center justify-between px-4 pt-4 pb-2'>
+                <div className="relative bg-white rounded-lg p-1 shadow-lg border border-gray-200">
+                  {/* Indicateur glissant */}
+                  <div
+                    className={`absolute top-1 bottom-1 bg-primary rounded-md transition-all duration-300 ease-in-out ${
+                      activeSection === 'Card' 
+                        ? 'left-1 right-1/2 mr-0.5' 
+                        : 'left-1/2 right-1 ml-0.5'
+                    }`}
+                  />
+                  
+                  {/* Boutons */}
+                  <div className="relative flex">
+                    <button
+                      onClick={() => setActiveSection('Card')}
+                      className={`px-8 py-3 rounded-md font-medium transition-colors duration-300 relative z-10 ${
+                        activeSection === 'Card'
+                          ? 'text-white'
+                          : 'text-gray-600 hover:text-gray-800'
+                      }`}
+                    >
+                      Card
+                    </button>
+                    
+                    <button
+                      onClick={() => setActiveSection('QR')}
+                      className={`px-8 py-3 rounded-md font-medium transition-colors duration-300 relative z-10 ${
+                        activeSection === 'QR'
+                          ? 'text-white'
+                          : 'text-gray-600 hover:text-gray-800'
+                      }`}
+                    >
+                      QR
+                    </button>
+                  </div>
+                </div>
+              </div>
+          </div>
+
+          {
+            activeSection == 'Card' ? <HomeCardPage /> : <HomeQRPage />
+          }
+
+        </div>
+        
+      </>
     : (loading.authenticated == true && loading.checked == true && loading.hasSubscription == false) ?
       <HomeNoSubscription />
     : ((loading.authenticated == false && loading.checked == false) ||

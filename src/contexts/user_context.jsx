@@ -80,32 +80,35 @@ export function UserContextProvider({ children }) {
 
   const { execute: getData } = useApi(userService.check_user_card_route);
 
-  useEffect(() => {
-    async function getUserData() {
-      if(user == null) {
-        // setLoading({...loading, checked: false, authenticated: false})
-      } else if(user != null && user_card == null) {
-        const { data, error } = await getData(user.phoneNumber);
-        let newValue = {...loading};
-        if(data != null) {
-          console.log(")data)", data)
-          setUserCard(data.card);
-          newValue = {...loading, checked: true};
-          if(data.subscription) {
-            setSubscription(data.subscription);
-            newValue = {...newValue, hasSubscription: true};
-          } else {
-            newValue = {...newValue, hasSubscription: false};
-          }
-          setLoading({...newValue });
+
+    
+  const getUserData = async () => {
+    if(user == null) {
+      // setLoading({...loading, checked: false, authenticated: false})
+    } else if(user != null && user_card == null) {
+      const { data, error } = await getData(user.phoneNumber);
+      let newValue = {...loading};
+      if(data != null) {
+        console.log(")data)", data)
+        setUserCard(data.card);
+        newValue = {...loading, checked: true};
+        if(data.subscription) {
+          setSubscription(data.subscription);
+          newValue = {...newValue, hasSubscription: true};
+        } else {
+          newValue = {...newValue, hasSubscription: false};
         }
-        else if(error){
-          console.log(")error)", error)
-          setLoading({...loading, checked: false})
-        }
+        setLoading({...newValue });
+      }
+      else if(error){
+        console.log(")error)", error)
+        setLoading({...loading, checked: false})
       }
     }
-    getUserData()
+  }
+
+  useEffect(() => {
+    getUserData();
   }, [user, user_card]);
 
   // useEffect(() => {
@@ -143,18 +146,22 @@ export function UserContextProvider({ children }) {
 
   const navigate = useNavigate();
 
-  const resetContext = () => {
+  const resetContext = async () => {
+    // Reset user data and navigate to home
     navigate('/');
-    setUser(null);
     setUserCard(null);
     setSubscription(null);
     setLoading({
       checked: null,
-      authenticated: null,
+      authenticated: loading?.authenticated,
       hasSubscription: null
     });
+    await getUserData();
+    console.log("User context reset");
+    // Clear localStorage
+
   };
-  
+
   // Value to be provided to consumers
   const value = {
     user,

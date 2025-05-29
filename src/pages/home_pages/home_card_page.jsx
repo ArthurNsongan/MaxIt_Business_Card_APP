@@ -73,12 +73,12 @@ function HomeCardPage() {
 
     return (
     <>
-        <div className="w-full relative translate-y-[-25px] min-h-[calc(100dvh-60px)] flex flex-col">
+        {/* <div className="w-full relative translate-y-[-25px] min-h-[calc(100dvh-60px)] flex flex-col">
           <div className='bg-black -mb-12 relative tracking-wide text-white pl-[32px] pr-[32px] pb-[60px] pt-[60px] h-[200px] rounded-b-2xl'>
             <h2 className='text-2xl font-bold'>Bienvenue</h2>
             <p className='leading-5 text-sm'>Interface de gestion de votre carte de visite digitale</p>
             
-          </div>
+          </div> */}
 
           <div ref={qrCodeRef} className='relative z-[50] px-4'>
             <div className='pt-4 pb-4 shadow shadow-gray-400 min-h-[240px] flex justify-center relative bg-white w-[100%] max-w-md rounded-3xl shadow-md'>
@@ -185,7 +185,7 @@ function HomeCardPage() {
             <Link to={"/edit"} className='btn text-center bg-black pt-2 pb-2 w-full ml-1 mr-1 rounded'>Modifier</Link>
           </div>
 
-        </div>
+        {/* </div> */}
       </>
   )
 }
