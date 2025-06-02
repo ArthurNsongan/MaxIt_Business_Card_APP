@@ -959,13 +959,14 @@ useEffect(() => {
                                     setFormData({ ...formData, background_color: color })
                                 }}
                                 value={formData.background_color}
+                                label="Couleur d'arrière-plan"
                             />
                         </div>
                         </div>
 
                         <div className="mb-6">
                         <label className="block mb-3 font-medium">Couleur du texte</label>
-                        <div className="flex flex-wrap gap-3">
+                        <div className="flex flex-wrap gap-3 w-full">
                             {textColorOptions.map((color) => (
                             <button
                                 key={color.value}
@@ -981,6 +982,15 @@ useEffect(() => {
                                 aria-label={color.value}
                             />
                             ))}
+                            {/* <ColorPicker 
+                                color={formData.text_color == "" || formData.text_color == null ? "#ff7900" : formData.text_color}
+                                onChange={(color) => {
+                                    console.log("Color changed:", color)
+                                    setFormData({ ...formData, text_color: color })
+                                }}
+                                value={formData.text_color}
+                                label="Couleur du texte"
+                            /> */}
                         </div>
                         </div>
 
